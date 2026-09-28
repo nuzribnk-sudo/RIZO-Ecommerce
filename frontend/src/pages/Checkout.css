@@ -1,7 +1,7 @@
 /* =========================================================
    CHECKOUT PAGE
    Same theme as Product Details
-   ========================================================= */
+========================================================= */
 
 .figma-checkout {
   width: 100%;
@@ -19,9 +19,10 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
+
 /* =========================================================
    MAIN CONTAINER
-   ========================================================= */
+========================================================= */
 
 .figma-checkout-container {
   width: calc(100% - 50px);
@@ -38,9 +39,10 @@
   box-sizing: border-box;
 }
 
+
 /* =========================================================
    LEFT SIDE
-   ========================================================= */
+========================================================= */
 
 .delivery-section {
   padding: 5px 28px 10px 5px;
@@ -48,10 +50,10 @@
   box-sizing: border-box;
 }
 
+
 /* =========================================================
    BACK BUTTON
-   BELOW CARD + CENTER
-   ========================================================= */
+========================================================= */
 
 .checkout-back-button {
   display: flex;
@@ -76,9 +78,10 @@
   border-color: #202020;
 }
 
+
 /* =========================================================
    LOGO
-   ========================================================= */
+========================================================= */
 
 .checkout-logo {
   margin-bottom: 25px;
@@ -88,9 +91,10 @@
   color: #111;
 }
 
+
 /* =========================================================
    TITLES
-   ========================================================= */
+========================================================= */
 
 .delivery-title,
 .coupon-section h2,
@@ -103,9 +107,10 @@
   color: #111;
 }
 
+
 /* =========================================================
    ERROR MESSAGE
-   ========================================================= */
+========================================================= */
 
 .checkout-error {
   width: calc(100% - 50px);
@@ -120,9 +125,10 @@
   font-size: 11px;
 }
 
+
 /* =========================================================
    FORM FIELDS
-   ========================================================= */
+========================================================= */
 
 .checkout-field {
   margin-bottom: 15px;
@@ -165,9 +171,10 @@
   box-shadow: 0 0 0 2px rgba(80, 80, 80, 0.06);
 }
 
+
 /* =========================================================
    ROWS
-   ========================================================= */
+========================================================= */
 
 .checkout-row {
   display: grid;
@@ -181,9 +188,10 @@
   gap: 12px;
 }
 
+
 /* =========================================================
    SAVE INFO
-   ========================================================= */
+========================================================= */
 
 .save-info {
   display: flex;
@@ -200,9 +208,10 @@
   accent-color: #202020;
 }
 
+
 /* =========================================================
    COUPON
-   ========================================================= */
+========================================================= */
 
 .coupon-section {
   margin-top: 25px;
@@ -257,18 +266,20 @@
   font-size: 10px;
 }
 
+
 /* =========================================================
    RIGHT SIDE
-   ========================================================= */
+========================================================= */
 
 .checkout-right {
   padding: 5px 5px 10px 0;
   box-sizing: border-box;
 }
 
+
 /* =========================================================
    ORDER SUMMARY
-   ========================================================= */
+========================================================= */
 
 .order-summary-products {
   margin-bottom: 20px;
@@ -282,23 +293,26 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.6);
 }
 
+
 /* =========================================================
    PRODUCT IMAGE
-   ========================================================= */
+========================================================= */
 
 .figma-product-image {
   position: relative;
   width: 65px;
   height: 75px;
   flex-shrink: 0;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   background: #fff;
   border: 1px solid #d5d5d2;
   border-radius: 9px;
 
-  /* Only changed for quantity badge */
+  /* Required for badge */
   overflow: visible;
 }
 
@@ -306,34 +320,93 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 8px;
 }
+
 
 /* =========================================================
-   PRODUCT QUANTITY
-   ========================================================= */
+   PRODUCT QUANTITY BADGE
+   Small circle + perfectly centered number
+========================================================= */
 
-.product-quantity {
-  position: absolute;
-  top: -7px;
-  right: -7px;
-  width: 18px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #202020;
-  color: #fff;
-  border: 2px solid #fff;
-  border-radius: 50%;
-  font-size: 9px;
-  line-height: 1;
-  z-index: 2;
-  box-sizing: border-box;
+.figma-product-image .product-quantity {
+  position: absolute !important;
+
+  top: -5px !important;
+  right: -5px !important;
+
+  width: 16px !important;
+  height: 16px !important;
+
+  min-width: 16px !important;
+  min-height: 16px !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  background: #202020 !important;
+  color: #ffffff !important;
+
+  border: 0 !important;
+  border-radius: 50% !important;
+
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 8px !important;
+  font-weight: 600 !important;
+
+  line-height: 16px !important;
+  text-align: center !important;
+  text-indent: 0 !important;
+  letter-spacing: 0 !important;
+
+  white-space: nowrap !important;
+
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+
+  transform: none !important;
+  z-index: 20 !important;
+
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2) !important;
 }
+
+
+/* If number is inside another element */
+.figma-product-image .product-quantity span,
+.figma-product-image .product-quantity strong,
+.figma-product-image .product-quantity b {
+  position: static !important;
+
+  display: block !important;
+
+  width: auto !important;
+  height: auto !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  color: #ffffff !important;
+
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 8px !important;
+  font-weight: 600 !important;
+
+  line-height: 1 !important;
+  text-align: center !important;
+  text-indent: 0 !important;
+  letter-spacing: 0 !important;
+
+  transform: none !important;
+}
+
 
 /* =========================================================
    PRODUCT NAME
-   ========================================================= */
+========================================================= */
 
 .figma-product-name {
   flex: 1;
@@ -360,9 +433,10 @@
   font-weight: 500;
 }
 
+
 /* =========================================================
    PRICE DETAILS
-   ========================================================= */
+========================================================= */
 
 .price-details {
   margin-top: 15px;
@@ -382,9 +456,10 @@
   color: #444;
 }
 
+
 /* =========================================================
    TOTAL
-   ========================================================= */
+========================================================= */
 
 .figma-total {
   display: flex;
@@ -420,9 +495,10 @@
   font-weight: 400;
 }
 
+
 /* =========================================================
    PAYMENT
-   ========================================================= */
+========================================================= */
 
 .payment-section {
   margin-top: 30px;
@@ -436,9 +512,10 @@
   font-size: 10px;
 }
 
+
 /* =========================================================
    PAYMENT METHOD
-   ========================================================= */
+========================================================= */
 
 .payment-method {
   display: flex;
@@ -503,9 +580,10 @@
   margin: 0;
 }
 
+
 /* =========================================================
    BILLING
-   ========================================================= */
+========================================================= */
 
 .billing-section {
   margin-top: 25px;
@@ -528,9 +606,10 @@
   accent-color: #202020;
 }
 
+
 /* =========================================================
    CHECKOUT NOTE
-   ========================================================= */
+========================================================= */
 
 .checkout-note {
   margin-top: 18px;
@@ -543,9 +622,10 @@
   line-height: 1.5;
 }
 
+
 /* =========================================================
    PAY BUTTON
-   ========================================================= */
+========================================================= */
 
 .figma-pay-button,
 .place-order-btn {
@@ -577,9 +657,10 @@
   cursor: not-allowed;
 }
 
+
 /* =========================================================
    POLICY LINKS
-   ========================================================= */
+========================================================= */
 
 .checkout-policy-links {
   display: flex;
@@ -601,9 +682,10 @@
   text-decoration: underline;
 }
 
+
 /* =========================================================
    EMPTY CHECKOUT
-   ========================================================= */
+========================================================= */
 
 .checkout-empty-page {
   width: 100%;
@@ -676,9 +758,10 @@
   background: #000;
 }
 
+
 /* =========================================================
    SHOP BUTTON
-   ========================================================= */
+========================================================= */
 
 .checkout-shop-btn {
   display: inline-flex;
@@ -701,9 +784,10 @@
   background: #000;
 }
 
+
 /* =========================================================
    LOADING
-   ========================================================= */
+========================================================= */
 
 .checkout-loading {
   width: 100%;
@@ -723,9 +807,10 @@
   font-size: 12px;
 }
 
+
 /* =========================================================
-   RESPONSIVE
-   ========================================================= */
+   RESPONSIVE - TABLET
+========================================================= */
 
 @media (max-width: 850px) {
   .figma-checkout-container {
@@ -749,11 +834,26 @@
   .checkout-error {
     width: calc(100% - 30px);
   }
+
+  .figma-product-image .product-quantity {
+    top: -5px !important;
+    right: -5px !important;
+
+    width: 16px !important;
+    height: 16px !important;
+
+    min-width: 16px !important;
+    min-height: 16px !important;
+
+    font-size: 8px !important;
+    line-height: 16px !important;
+  }
 }
+
 
 /* =========================================================
    MOBILE
-   ========================================================= */
+========================================================= */
 
 @media (max-width: 600px) {
   .figma-checkout {
@@ -790,6 +890,50 @@
   .figma-product-image {
     width: 58px;
     height: 68px;
+    border-radius: 8px;
+    overflow: visible;
+  }
+
+  /* MOBILE QUANTITY BADGE */
+
+  .figma-product-image .product-quantity {
+    top: -4px !important;
+    right: -4px !important;
+
+    width: 15px !important;
+    height: 15px !important;
+
+    min-width: 15px !important;
+    min-height: 15px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    background: #202020 !important;
+    color: #ffffff !important;
+
+    border: 0 !important;
+    border-radius: 50% !important;
+
+    font-size: 7px !important;
+    font-weight: 600 !important;
+
+    line-height: 15px !important;
+    text-align: center !important;
+
+    transform: none !important;
+  }
+
+  .figma-product-image .product-quantity span,
+  .figma-product-image .product-quantity strong,
+  .figma-product-image .product-quantity b {
+    font-size: 7px !important;
+    line-height: 1 !important;
+    text-align: center !important;
   }
 
   .figma-product-name {
@@ -826,9 +970,10 @@
   }
 }
 
+
 /* =========================================================
    SMALL MOBILE
-   ========================================================= */
+========================================================= */
 
 @media (max-width: 400px) {
   .figma-checkout-container {
@@ -862,9 +1007,35 @@
   .figma-total strong {
     font-size: 14px;
   }
+
+  /* SMALL MOBILE QUANTITY BADGE */
+
+  .figma-product-image .product-quantity {
+    top: -3px !important;
+    right: -3px !important;
+
+    width: 14px !important;
+    height: 14px !important;
+
+    min-width: 14px !important;
+    min-height: 14px !important;
+
+    font-size: 7px !important;
+    line-height: 14px !important;
+  }
+
+  .figma-product-image .product-quantity span,
+  .figma-product-image .product-quantity strong,
+  .figma-product-image .product-quantity b {
+    font-size: 7px !important;
+    line-height: 1 !important;
+  }
 }
 
-/* ================= AVAILABLE COUPONS ================= */
+
+/* =========================================================
+   AVAILABLE COUPONS
+========================================================= */
 
 .available-coupons {
   margin-top: 14px;

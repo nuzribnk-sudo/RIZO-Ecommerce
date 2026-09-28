@@ -96,12 +96,10 @@ function ProductDetails() {
           return;
         }
 
-        /*
-          Fetch only products from the current category.
-          limit=5 because the current product can also be
-          included in the response. After removing the
-          current product, maximum 4 related products remain.
-        */
+        // Fetch only products from the current category.
+        // limit=5 because the current product can also be
+        // included in the response. After removing the
+        // current product, maximum 4 related products remain.
 
         const response = await fetch(
           `http://localhost:5000/api/products?category=${currentCategoryId}&limit=5`
@@ -111,8 +109,7 @@ function ProductDetails() {
 
         if (!response.ok) {
           throw new Error(
-            data.message ||
-              "Failed to fetch related products"
+            data.message || "Failed to fetch related products"
           );
         }
 
@@ -120,10 +117,10 @@ function ProductDetails() {
 
         // Same category products only.
         // Current product is removed.
+
         const related = products
           .filter(
-            (item) =>
-              String(item._id) !== String(id)
+            (item) => String(item._id) !== String(id)
           )
           .slice(0, 4);
 
@@ -312,16 +309,7 @@ function ProductDetails() {
 
       <main className="product-details-page">
 
-        {/* MOBILE BACK BUTTON */}
-
-        <button
-          type="button"
-          className="mobile-product-back"
-          onClick={() => navigate(-1)}
-          aria-label="Go back"
-        >
-          ←
-        </button>
+        {/* ================= MAIN PRODUCT CONTAINER ================= */}
 
         <div className="product-details-container">
 
@@ -342,7 +330,6 @@ function ProductDetails() {
 
             {product.images?.length > 0 && (
               <div className="product-thumbnails">
-
                 {product.images.map(
                   (image, index) => (
                     <button
@@ -366,7 +353,6 @@ function ProductDetails() {
                     </button>
                   )
                 )}
-
               </div>
             )}
 
@@ -389,7 +375,7 @@ function ProductDetails() {
               Taxes included.
             </p>
 
-            {/* SIZE */}
+            {/* ================= SIZE ================= */}
 
             {product.variants?.length > 0 && (
               <div className="size-section">
@@ -399,7 +385,6 @@ function ProductDetails() {
                 </div>
 
                 <div className="size-options">
-
                   {product.variants.map(
                     (size) => (
                       <button
@@ -418,13 +403,12 @@ function ProductDetails() {
                       </button>
                     )
                   )}
-
                 </div>
 
               </div>
             )}
 
-            {/* STOCK */}
+            {/* ================= STOCK ================= */}
 
             <div className="order-note">
               {product.stock > 0
@@ -432,7 +416,7 @@ function ProductDetails() {
                 : "CURRENTLY OUT OF STOCK"}
             </div>
 
-            {/* QUANTITY */}
+            {/* ================= QUANTITY ================= */}
 
             {product.stock > 0 && (
               <div className="quantity-section">
@@ -462,7 +446,7 @@ function ProductDetails() {
               </div>
             )}
 
-            {/* ACTION BUTTONS */}
+            {/* ================= ACTION BUTTONS ================= */}
 
             <div className="product-actions">
 
@@ -496,14 +480,13 @@ function ProductDetails() {
 
             </div>
 
-            {/* DESCRIPTION */}
+            {/* ================= DESCRIPTION ================= */}
 
             <p className="product-long-description">
               {product.description}
             </p>
 
           </div>
-
         </div>
 
         {/* ================= RELATED PRODUCTS ================= */}
@@ -562,7 +545,6 @@ function ProductDetails() {
               })}
 
             </div>
-
           </section>
         )}
 
