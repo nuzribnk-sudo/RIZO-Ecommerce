@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
+
 import { useNavigate } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
+
 import Footer from "../components/Footer";
+
+import toast from "react-hot-toast";
 
 import "./PersonalInformation.css";
 
@@ -17,7 +21,6 @@ function PersonalInformation() {
   const [saving, setSaving] = useState(false);
 
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
   // ================= GET PROFILE =================
 
@@ -93,7 +96,6 @@ function PersonalInformation() {
     e.preventDefault();
 
     setError("");
-    setSuccess("");
 
     const token = localStorage.getItem("token");
 
@@ -152,7 +154,8 @@ function PersonalInformation() {
         JSON.stringify(updatedUser)
       );
 
-      setSuccess(
+      // Success message as toast only
+      toast.success(
         data.message || "Profile updated successfully!"
       );
 
@@ -184,12 +187,6 @@ function PersonalInformation() {
           {error && (
             <p className="phone-error">
               {error}
-            </p>
-          )}
-
-          {success && (
-            <p className="profile-success">
-              {success}
             </p>
           )}
 

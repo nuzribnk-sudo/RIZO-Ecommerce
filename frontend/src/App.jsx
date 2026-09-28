@@ -26,6 +26,7 @@ import Wishlist from "./pages/Wishlist";
 import CategoriesPage from "./pages/CategoriesPage";
 import OrderTracking from "./pages/OrderTracking";
 import NotFound from "./pages/NotFound";
+import BlogDetails from "./pages/BlogDetails";
 
 // ================= FOOTER PAGES =================
 
@@ -83,35 +84,22 @@ function App() {
         {/* ================= CUSTOMER SIDE ================= */}
 
         <Route path="/" element={<Home />} />
-
         <Route path="/shop" element={<Shop />} />
-
         <Route path="/product/:id" element={<ProductDetails />} />
-
         <Route path="/cart" element={<Cart />} />
-
         <Route path="/checkout" element={<Checkout />} />
-
         <Route path="/orders" element={<Orders />} />
-
         <Route path="/login" element={<Login />} />
-
         <Route path="/register" element={<Register />} />
 
         {/* ================= PROFILE ================= */}
 
         <Route path="/profile" element={<Profile />} />
-
         <Route
           path="/profile/personal"
           element={<PersonalInformation />}
         />
-
-        <Route
-          path="/profile/addresses"
-          element={<Addresses />}
-        />
-
+        <Route path="/profile/addresses" element={<Addresses />} />
         <Route
           path="/profile/change-password"
           element={<ChangePassword />}
@@ -123,53 +111,37 @@ function App() {
           path="/forgot-password"
           element={<ForgotPassword />}
         />
-
         <Route
           path="/reset-password"
           element={<ResetPassword />}
         />
-
-        <Route
-          path="/verify-otp"
-          element={<VerifyOtp />}
-        />
+        <Route path="/verify-otp" element={<VerifyOtp />} />
 
         {/* ================= OTHER CUSTOMER PAGES ================= */}
 
         <Route path="/about" element={<About />} />
-
         <Route path="/contact" element={<Contact />} />
-
         <Route
           path="/new-arrivals"
           element={<NewArrivalsPage />}
         />
-
         <Route
           path="/best-sellers"
           element={<BestSellersPage />}
         />
-
         <Route
           path="/category/:slug"
           element={<Category />}
         />
-
         <Route
           path="/category/:slug/:subcategorySlug"
           element={<Category />}
         />
-
         <Route
           path="/categories"
           element={<CategoriesPage />}
         />
-
-        <Route
-          path="/wishlist"
-          element={<Wishlist />}
-        />
-
+        <Route path="/wishlist" element={<Wishlist />} />
         <Route
           path="/track-order/:orderId"
           element={<OrderTracking />}
@@ -178,14 +150,14 @@ function App() {
         {/* ================= FOOTER PAGES ================= */}
 
         <Route path="/support" element={<Support />} />
-
         <Route path="/invoicing" element={<Invoicing />} />
-
         <Route path="/careers" element={<Careers />} />
-
         <Route path="/blog" element={<Blog />} />
-
         <Route path="/faqs" element={<FAQs />} />
+        <Route
+          path="/blog/:id"
+          element={<BlogDetails />}
+        />
 
         {/* ================= POLICY PAGES ================= */}
 
@@ -193,17 +165,14 @@ function App() {
           path="/refund-policy"
           element={<RefundPolicy />}
         />
-
         <Route
           path="/shipping-policy"
           element={<ShippingPolicy />}
         />
-
         <Route
           path="/privacy-policy"
           element={<PrivacyPolicy />}
         />
-
         <Route
           path="/terms-of-service"
           element={<TermsOfService />}
@@ -457,18 +426,20 @@ function App() {
             }
           />
 
+          {/* ================= ADMIN 404 ================= */}
+
           <Route
-  path="/admin/*"
-  element={
-    <AdminLayout>
-      <AdminNotFound />
-    </AdminLayout>
-  }
-/>
+            path="/admin/*"
+            element={
+              <AdminLayout>
+                <AdminNotFound />
+              </AdminLayout>
+            }
+          />
 
         </Route>
 
-        {/* ================= 404 PAGE ================= */}
+        {/* ================= CUSTOMER 404 PAGE ================= */}
 
         <Route path="*" element={<NotFound />} />
 

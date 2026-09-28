@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-
 import { Link, useNavigate } from "react-router-dom";
-
 import {
   UserRound,
   UserRoundCheck,
@@ -9,35 +7,28 @@ import {
   Search,
   Heart,
 } from "lucide-react";
-
 import logo from "../assets/logo.png";
-
 import "./Navbar.css";
 
 const API_URL = "http://localhost:5000/api";
 
 function Navbar() {
   const [showSearch, setShowSearch] = useState(false);
-
   const [search, setSearch] = useState("");
-
+  const [suggestions, setSuggestions] = useState([]);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-
   const [cartCount, setCartCount] = useState(0);
-
   const [wishlistCount, setWishlistCount] = useState(0);
 
   const navigate = useNavigate();
-
   const navbarRef = useRef(null);
 
-  // User login ചെയ്തിട്ടുണ്ടോ എന്ന് പരിശോധിക്കുന്നു
   const token = localStorage.getItem("token");
 
   // =========================
-  // FETCH CART + WISHLIST COUNT
+  // CART + WISHLIST COUNTS
   // =========================
-
   useEffect(() => {
     const fetchCounts = async () => {
       if (!token) {
@@ -47,7 +38,6 @@ function Navbar() {
       }
 
       try {
-        // CART
         const cartResponse = await fetch(`${API_URL}/cart`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -56,43 +46,29 @@ function Navbar() {
 
         if (cartResponse.ok) {
           const cartData = await cartResponse.json();
-
           const cartItems = cartData.cart?.items || [];
-
-          // Number of products/items in cart
           setCartCount(cartItems.length);
         } else {
           setCartCount(0);
         }
 
-        // WISHLIST
-        const wishlistResponse = await fetch(
-          `${API_URL}/wishlist`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const wishlistResponse = await fetch(`${API_URL}/wishlist`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (wishlistResponse.ok) {
-          const wishlistData =
-            await wishlistResponse.json();
-
+          const wishlistData = await wishlistResponse.json();
           const wishlistProducts =
             wishlistData.wishlist?.products || [];
 
-          // Number of products in wishlist
           setWishlistCount(wishlistProducts.length);
         } else {
           setWishlistCount(0);
         }
       } catch (error) {
-        console.error(
-          "Navbar count fetch error:",
-          error
-        );
-
+        console.error("Navbar count fetch error:", error);
         setCartCount(0);
         setWishlistCount(0);
       }
@@ -100,7 +76,6 @@ function Navbar() {
 
     fetchCounts();
 
-    // Refresh count when cart/wishlist changes
     const handleCartWishlistUpdate = () => {
       fetchCounts();
     };
@@ -129,42 +104,119 @@ function Navbar() {
   }, [token]);
 
   // =========================
-  // CLOSE SEARCH AND MENU
+  // SEARCH SUGGESTIONS
   // =========================
+  useEffect(() => {
+    const searchText = search.trim();
 
-  const closeSearch = () => {
-    setShowSearch(false);
-  };
+    if (!searchText) {
+      setSuggestions([]);
+      setLoadingSuggestions(false);
+      return;
+    }
 
-  const closeMenu = () => {
-    setShowMenu(false);
-    setShowSearch(false);
-  };
+    const controller = new AbortController();
+
+    const timer = setTimeout(async () => {
+      try {
+        setLoadingSuggestions(true);
+
+        const response = await fetch(
+          `${API_URL}/products/search-suggestions?search=${encodeURIComponent(
+            searchText
+          )}`,
+          {
+            signal: controller.signal,
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch suggestions");
+        }
+
+        const data = await response.json();
+
+        setSuggestions(data.suggestions || []);
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          console.error("Search suggestions error:", error);
+          setSuggestions([]);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setLoadingSuggestions(false);
+        }
+      }
+    }, 300);
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [search]);
 
   // =========================
-  // SEARCH FUNCTION
+  // SEARCH
   // =========================
-
   const handleSearch = (e) => {
     e.preventDefault();
 
-    if (search.trim()) {
-      navigate(
-        `/shop?search=${encodeURIComponent(
-          search.trim()
-        )}`
-      );
+    const searchText = search.trim();
 
-      setSearch("");
-      setShowSearch(false);
-      setShowMenu(false);
+    if (!searchText) {
+      return;
     }
+
+    navigate(
+      `/shop?search=${encodeURIComponent(searchText)}`
+    );
+
+    setSearch("");
+    setSuggestions([]);
+    setShowSearch(false);
+    setShowMenu(false);
   };
 
   // =========================
-  // CLOSE SEARCH WHEN CLICKING OUTSIDE
+  // SUGGESTION CLICK
   // =========================
+  const handleSuggestionClick = (suggestion) => {
+    const searchText = suggestion.name || suggestion.sku;
 
+    if (!searchText) {
+      return;
+    }
+
+    navigate(
+      `/shop?search=${encodeURIComponent(searchText)}`
+    );
+
+    setSearch("");
+    setSuggestions([]);
+    setShowSearch(false);
+    setShowMenu(false);
+  };
+
+  // =========================
+  // CLOSE SEARCH
+  // =========================
+  const closeSearch = () => {
+    setShowSearch(false);
+    setSuggestions([]);
+  };
+
+  // =========================
+  // CLOSE MENU
+  // =========================
+  const closeMenu = () => {
+    setShowMenu(false);
+    setShowSearch(false);
+    setSuggestions([]);
+  };
+
+  // =========================
+  // OUTSIDE CLICK
+  // =========================
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (
@@ -172,6 +224,7 @@ function Navbar() {
         !navbarRef.current.contains(event.target)
       ) {
         setShowSearch(false);
+        setSuggestions([]);
       }
     };
 
@@ -189,14 +242,14 @@ function Navbar() {
   }, []);
 
   // =========================
-  // CLOSE SEARCH ON ESCAPE
+  // ESCAPE
   // =========================
-
   useEffect(() => {
     const handleEscape = (event) => {
       if (event.key === "Escape") {
         setShowSearch(false);
         setShowMenu(false);
+        setSuggestions([]);
       }
     };
 
@@ -214,12 +267,8 @@ function Navbar() {
   }, []);
 
   return (
-    <header
-      className="navbar"
-      ref={navbarRef}
-    >
+    <header className="navbar" ref={navbarRef}>
       {/* LOGO */}
-
       <Link
         to="/"
         replace
@@ -229,25 +278,17 @@ function Navbar() {
         <img src={logo} alt="Rizo" />
       </Link>
 
-      {/* DESKTOP NAVIGATION LINKS */}
-
+      {/* NAVIGATION */}
       <nav
         className={`nav-links ${
           showMenu ? "mobile-open" : ""
         }`}
       >
-        <Link
-          to="/"
-          replace
-          onClick={closeMenu}
-        >
+        <Link to="/" replace onClick={closeMenu}>
           Home
         </Link>
 
-        <Link
-          to="/shop"
-          onClick={closeMenu}
-        >
+        <Link to="/shop" onClick={closeMenu}>
           Shop
         </Link>
 
@@ -258,33 +299,28 @@ function Navbar() {
           New Arrivals
         </Link>
 
-        <Link
-          to="/about"
-          onClick={closeMenu}
-        >
+        <Link to="/about" onClick={closeMenu}>
           About
         </Link>
 
-        <Link
-          to="/contact"
-          onClick={closeMenu}
-        >
+        <Link to="/contact" onClick={closeMenu}>
           Contact
         </Link>
       </nav>
 
-      {/* NAV ICONS */}
-
+      {/* RIGHT ICONS */}
       <div className="nav-icons">
-
-        {/* SEARCH ICON */}
-
+        {/* SEARCH */}
         <button
           type="button"
           aria-label="Search"
           onClick={() => {
             setShowSearch((prev) => !prev);
             setShowMenu(false);
+
+            if (showSearch) {
+              setSuggestions([]);
+            }
           }}
         >
           <Search
@@ -293,8 +329,7 @@ function Navbar() {
           />
         </button>
 
-        {/* ACCOUNT / LOGIN ICON */}
-
+        {/* ACCOUNT */}
         <Link
           to={token ? "/profile" : "/login"}
           aria-label={
@@ -316,8 +351,7 @@ function Navbar() {
           )}
         </Link>
 
-        {/* WISHLIST ICON */}
-
+        {/* WISHLIST */}
         <Link
           to="/wishlist"
           aria-label="Wishlist"
@@ -336,8 +370,7 @@ function Navbar() {
           )}
         </Link>
 
-        {/* CART / SHOPPING BAG ICON */}
-
+        {/* CART */}
         <Link
           to="/cart"
           aria-label="Cart"
@@ -356,8 +389,7 @@ function Navbar() {
           )}
         </Link>
 
-        {/* MOBILE MENU BUTTON */}
-
+        {/* MOBILE MENU */}
         <button
           type="button"
           className="menu-toggle"
@@ -365,37 +397,77 @@ function Navbar() {
           onClick={() => {
             setShowMenu((prev) => !prev);
             setShowSearch(false);
+            setSuggestions([]);
           }}
         >
           {showMenu ? "✕" : "☰"}
         </button>
-
       </div>
 
       {/* SEARCH BOX */}
-
       {showSearch && (
-        <form
-          className="search-box"
-          onSubmit={handleSearch}
-        >
-          <input
-            type="text"
-            placeholder="Search products..."
-            value={search}
-            onChange={(e) =>
-              setSearch(e.target.value)
-            }
-            autoFocus
-          />
+        <div className="search-wrapper">
+          <form
+            className="search-box"
+            onSubmit={handleSearch}
+          >
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={search}
+              onChange={(e) =>
+                setSearch(e.target.value)
+              }
+              autoFocus
+            />
 
-          <button type="submit">
-            Search
-          </button>
-        </form>
+            <button type="submit">
+              Search
+            </button>
+          </form>
+
+          {/* SUGGESTIONS */}
+          {search.trim() && (
+            <div className="search-suggestions">
+              {loadingSuggestions ? (
+                <div className="suggestion-loading">
+                  Searching...
+                </div>
+              ) : suggestions.length > 0 ? (
+                suggestions.map((suggestion) => (
+                  <button
+                    type="button"
+                    className="suggestion-item"
+                    key={suggestion._id}
+                    onClick={() =>
+                      handleSuggestionClick(
+                        suggestion
+                      )
+                    }
+                  >
+                    <span className="suggestion-name">
+                      {suggestion.name}
+                    </span>
+
+                    {suggestion.sku && (
+                      <span className="suggestion-sku">
+                        {suggestion.sku}
+                      </span>
+                    )}
+                  </button>
+                ))
+              ) : (
+                <div className="suggestion-empty">
+                  No products found
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       )}
     </header>
   );
 }
 
 export default Navbar;
+

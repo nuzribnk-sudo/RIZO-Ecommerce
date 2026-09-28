@@ -391,6 +391,9 @@
   background: #ffffff;
 }
 
+.category-wishlist-btn.active-wishlist {
+  color: #e63946;
+}
 
 /* =========================================
    SOLD OUT

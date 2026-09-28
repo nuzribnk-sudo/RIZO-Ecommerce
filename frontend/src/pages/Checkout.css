@@ -58,20 +58,15 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-
   margin: 18px auto 0;
   padding: 9px 18px;
-
   border: 1px solid #d2d2d0;
   border-radius: 8px;
-
-  background: #fff;
-  color: #202020;
-
+  background: #0e0e0e;
+  color: #f8f6f6;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 11px;
   cursor: pointer;
-
   transition: 0.2s ease;
 }
 
@@ -116,15 +111,11 @@
   width: calc(100% - 50px);
   max-width: 1000px;
   margin: 0 auto 18px;
-
   padding: 10px 12px;
-
   box-sizing: border-box;
-
   background: rgba(255, 255, 255, 0.65);
   border: 1px solid #cfcfcb;
   border-radius: 7px;
-
   color: #555;
   font-size: 11px;
 }
@@ -150,22 +141,15 @@
 .checkout-field textarea {
   width: 100%;
   min-height: 38px;
-
   padding: 9px 11px;
-
   box-sizing: border-box;
-
   background: #fff;
   border: 1px solid #d6d6d3;
   border-radius: 7px;
-
   outline: none;
-
   color: #222;
-
   font-family: Arial, Helvetica, sans-serif;
   font-size: 11px;
-
   transition: 0.2s ease;
 }
 
@@ -205,9 +189,7 @@
   display: flex;
   align-items: center;
   gap: 7px;
-
   margin: 5px 0 22px;
-
   color: #444;
   font-size: 10px;
 }
@@ -225,7 +207,6 @@
 .coupon-section {
   margin-top: 25px;
   padding-top: 20px;
-
   border-top: 1px solid rgba(255, 255, 255, 0.6);
 }
 
@@ -241,17 +222,12 @@
 
 .discount-box input {
   flex: 1;
-
   min-height: 37px;
-
   padding: 9px 11px;
-
   background: #fff;
   border: 1px solid #d6d6d3;
   border-radius: 7px;
-
   outline: none;
-
   font-size: 11px;
 }
 
@@ -261,19 +237,13 @@
 
 .discount-box button {
   min-width: 72px;
-
   padding: 8px 12px;
-
   background: #202020;
   color: #fff;
-
   border: 1px solid #202020;
   border-radius: 7px;
-
   font-size: 10px;
-
   cursor: pointer;
-
   transition: 0.2s ease;
 }
 
@@ -308,28 +278,28 @@
   display: flex;
   align-items: center;
   gap: 12px;
-
   padding: 10px 0;
-
   border-bottom: 1px solid rgba(255, 255, 255, 0.6);
 }
 
+/* =========================================================
+   PRODUCT IMAGE
+   ========================================================= */
+
 .figma-product-image {
+  position: relative;
   width: 65px;
   height: 75px;
-
   flex-shrink: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   background: #fff;
-
   border: 1px solid #d5d5d2;
   border-radius: 9px;
 
-  overflow: hidden;
+  /* Only changed for quantity badge */
+  overflow: visible;
 }
 
 .figma-product-image img {
@@ -338,30 +308,36 @@
   object-fit: cover;
 }
 
+/* =========================================================
+   PRODUCT QUANTITY
+   ========================================================= */
+
 .product-quantity {
-  display: inline-flex;
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  width: 18px;
+  height: 18px;
+  display: flex;
   align-items: center;
   justify-content: center;
-
-  min-width: 18px;
-  height: 18px;
-
-  margin-left: -22px;
-  margin-top: -55px;
-
   background: #202020;
   color: #fff;
-
+  border: 2px solid #fff;
   border-radius: 50%;
-
   font-size: 9px;
+  line-height: 1;
+  z-index: 2;
+  box-sizing: border-box;
 }
+
+/* =========================================================
+   PRODUCT NAME
+   ========================================================= */
 
 .figma-product-name {
   flex: 1;
-
   color: #222;
-
   font-family: Arial, Helvetica, sans-serif;
   font-size: 11px;
   line-height: 1.5;
@@ -397,9 +373,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   margin-bottom: 10px;
-
   color: #444;
   font-size: 11px;
 }
@@ -416,21 +390,16 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   margin-top: 15px;
   padding-top: 15px;
-
   border-top: 1px solid rgba(255, 255, 255, 0.7);
 }
 
 .figma-total h2 {
   margin: 0;
-
   font-family: Georgia, "Times New Roman", serif;
-
   font-size: 19px;
   font-weight: 400;
-
   color: #111;
 }
 
@@ -458,34 +427,29 @@
 .payment-section {
   margin-top: 30px;
   padding-top: 22px;
-
   border-top: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 .payment-subtitle {
   margin: -8px 0 15px;
-
   color: #555;
   font-size: 10px;
 }
 
-/* PAYMENT METHOD */
+/* =========================================================
+   PAYMENT METHOD
+   ========================================================= */
 
 .payment-method {
   display: flex;
   align-items: center;
   gap: 10px;
-
   margin-bottom: 10px;
   padding: 12px;
-
   background: #fff;
-
   border: 1px solid #d6d6d3;
   border-radius: 8px;
-
   cursor: pointer;
-
   transition: 0.2s ease;
 }
 
@@ -504,10 +468,8 @@
 
 .payment-method-content {
   flex: 1;
-
   display: flex;
   align-items: center;
-
   gap: 10px;
 }
 
@@ -520,9 +482,7 @@
 .payment-icons {
   display: flex;
   align-items: center;
-
   gap: 7px;
-
   color: #444;
   font-size: 10px;
 }
@@ -530,16 +490,11 @@
 .payment-info-box {
   margin-top: 8px;
   margin-bottom: 10px;
-
   padding: 10px 12px;
-
   background: rgba(255, 255, 255, 0.65);
-
   border: 1px solid #d6d6d3;
   border-radius: 7px;
-
   color: #555;
-
   font-size: 10px;
   line-height: 1.5;
 }
@@ -555,7 +510,6 @@
 .billing-section {
   margin-top: 25px;
   padding-top: 22px;
-
   border-top: 1px solid rgba(255, 255, 255, 0.6);
 }
 
@@ -563,12 +517,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
-
   margin-bottom: 10px;
-
   color: #333;
   font-size: 10px;
-
   cursor: pointer;
 }
 
@@ -583,16 +534,11 @@
 
 .checkout-note {
   margin-top: 18px;
-
   padding: 11px 12px;
-
   background: rgba(255, 255, 255, 0.55);
-
   border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: 7px;
-
   color: #555;
-
   font-size: 9px;
   line-height: 1.5;
 }
@@ -604,24 +550,17 @@
 .figma-pay-button,
 .place-order-btn {
   width: 100%;
-
   min-height: 44px;
-
   margin-top: 20px;
   padding: 11px 18px;
-
   background: #202020;
   color: #fff;
-
   border: 1px solid #202020;
   border-radius: 10px;
-
   font-family: Arial, Helvetica, sans-serif;
   font-size: 11px;
   font-weight: 500;
-
   cursor: pointer;
-
   transition: 0.2s ease;
 }
 
@@ -646,11 +585,8 @@
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-
   gap: 15px;
-
   margin-top: 15px;
-
   color: #555;
   font-size: 9px;
 }
@@ -672,16 +608,12 @@
 .checkout-empty-page {
   width: 100%;
   min-height: 100vh;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   padding: 40px 20px;
-
   box-sizing: border-box;
-
   background: linear-gradient(
     110deg,
     #a8a8a6 0%,
@@ -694,45 +626,33 @@
 .checkout-empty {
   width: 100%;
   max-width: 500px;
-
   padding: 35px 25px;
-
   text-align: center;
-
   background: rgba(255, 255, 255, 0.08);
-
   border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: 14px;
-
   box-shadow: 0 8px 24px rgba(50, 50, 50, 0.06);
 }
 
 .checkout-empty h2 {
   margin: 0 0 10px;
-
   font-family: Georgia, "Times New Roman", serif;
-
   font-size: 24px;
   font-weight: 400;
-
   color: #111;
 }
 
 .checkout-empty p {
   margin-bottom: 20px;
-
   color: #444;
   font-size: 11px;
 }
 
 .checkout-empty-logo {
   margin-bottom: 15px;
-
   font-family: Georgia, "Times New Roman", serif;
-
   font-size: 25px;
   font-weight: 400;
-
   color: #111;
 }
 
@@ -743,17 +663,12 @@
 
 .checkout-empty button {
   min-height: 40px;
-
   padding: 9px 18px;
-
   background: #202020;
   color: #fff;
-
   border: 1px solid #202020;
   border-radius: 9px;
-
   font-size: 10px;
-
   cursor: pointer;
 }
 
@@ -769,23 +684,16 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   min-width: 130px;
   min-height: 40px;
-
   padding: 9px 18px;
-
   background: #202020;
   color: #fff;
-
   border: 1px solid #202020;
   border-radius: 9px;
-
   font-size: 10px;
-
   text-decoration: none;
   cursor: pointer;
-
   transition: 0.2s ease;
 }
 
@@ -800,11 +708,9 @@
 .checkout-loading {
   width: 100%;
   min-height: 100vh;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   background: linear-gradient(
     110deg,
     #a8a8a6 0%,
@@ -812,9 +718,7 @@
     #e1e1df 68%,
     #f7f7f5 100%
   );
-
   color: #333;
-
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
 }
@@ -826,22 +730,15 @@
 @media (max-width: 850px) {
   .figma-checkout-container {
     width: calc(100% - 30px);
-
     grid-template-columns: 1fr;
-
     gap: 30px;
-
     padding: 20px;
   }
 
   .delivery-section {
     padding-right: 5px;
-
     border-right: none;
-
-    border-bottom: 1px solid
-      rgba(255, 255, 255, 0.6);
-
+    border-bottom: 1px solid rgba(255, 255, 255, 0.6);
     padding-bottom: 30px;
   }
 
@@ -865,9 +762,7 @@
 
   .figma-checkout-container {
     width: calc(100% - 20px);
-
     padding: 16px;
-
     border-radius: 12px;
   }
 
@@ -967,4 +862,74 @@
   .figma-total strong {
     font-size: 14px;
   }
+}
+
+/* ================= AVAILABLE COUPONS ================= */
+
+.available-coupons {
+  margin-top: 14px;
+}
+
+.available-coupons h3 {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.available-coupon {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border: 1px solid #dddddd;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.available-coupon-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.available-coupon-info strong {
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+.available-coupon-info span {
+  font-size: 11px;
+}
+
+.available-coupon-info small {
+  font-size: 9px;
+  color: #777777;
+}
+
+.available-coupon button {
+  flex-shrink: 0;
+  padding: 7px 12px;
+  border: 1px solid #202020;
+  border-radius: 4px;
+  background: #202020;
+  color: #ffffff;
+  font-size: 9px;
+  cursor: pointer;
+}
+
+.available-coupon button:hover {
+  background: #000000;
+}
+
+.available-coupon button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.coupon-loading {
+  margin: 8px 0 0;
+  font-size: 10px;
+  color: #777777;
 }

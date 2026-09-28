@@ -1,7 +1,10 @@
 import { useEffect } from "react";
 
 import Navbar from "../components/Navbar";
+
 import Footer from "../components/Footer";
+
+import { toast } from "react-hot-toast";
 
 import "./Careers.css";
 
@@ -36,7 +39,13 @@ function Careers() {
   }, []);
 
   const handleApply = (jobTitle) => {
-    alert(`Application for ${jobTitle} will be available soon!`);
+    toast.success(
+      `Application for ${jobTitle} will be available soon!`,
+      {
+        duration: 2000,
+        position: "top-center",
+      }
+    );
   };
 
   return (
@@ -44,7 +53,6 @@ function Careers() {
       <Navbar />
 
       <main className="careers-page">
-
         {/* HERO */}
         <section className="careers-heading">
           <p>JOIN RIZO</p>
@@ -69,7 +77,6 @@ function Careers() {
 
         {/* BENEFITS */}
         <section className="career-benefits">
-
           <div className="benefit-card">
             <span>✦</span>
 
@@ -99,12 +106,10 @@ function Careers() {
               Be part of a supportive and friendly working environment.
             </p>
           </div>
-
         </section>
 
         {/* JOB OPENINGS */}
         <section className="jobs-section">
-
           <div className="jobs-heading">
             <p>OPPORTUNITIES</p>
 
@@ -112,23 +117,21 @@ function Careers() {
           </div>
 
           <div className="jobs-container">
-
             {jobs.map((job) => (
               <article
                 className="job-card"
                 key={job.id}
               >
-
                 <div className="job-info">
-
                   <h3>{job.title}</h3>
 
                   <div className="job-details">
                     <span>{job.department}</span>
+
                     <span>{job.location}</span>
+
                     <span>{job.type}</span>
                   </div>
-
                 </div>
 
                 <button
@@ -138,17 +141,13 @@ function Careers() {
                 >
                   APPLY NOW
                 </button>
-
               </article>
             ))}
-
           </div>
-
         </section>
 
         {/* CONTACT */}
         <section className="careers-contact">
-
           <h2>DON'T SEE THE RIGHT ROLE?</h2>
 
           <p>
@@ -162,9 +161,7 @@ function Careers() {
           >
             SEND YOUR RESUME
           </a>
-
         </section>
-
       </main>
 
       <Footer />

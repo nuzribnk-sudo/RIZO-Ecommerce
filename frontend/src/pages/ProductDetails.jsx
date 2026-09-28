@@ -1,34 +1,23 @@
 import { useEffect, useState } from "react";
-
 import { useParams, useNavigate } from "react-router-dom";
-
-import toast from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
 import Navbar from "../components/Navbar";
-
 import Footer from "../components/Footer";
 
 import "./ProductDetails.css";
 
 function ProductDetails() {
   const { id } = useParams();
-
   const navigate = useNavigate();
 
   const [product, setProduct] = useState(null);
-
   const [relatedProducts, setRelatedProducts] = useState([]);
-
   const [selectedImage, setSelectedImage] = useState("");
-
   const [selectedSize, setSelectedSize] = useState("");
-
   const [quantity, setQuantity] = useState(1);
-
   const [loading, setLoading] = useState(true);
-
   const [error, setError] = useState("");
-
   const [addingToCart, setAddingToCart] = useState(false);
 
   // ================= SCROLL TO TOP =================
@@ -47,9 +36,7 @@ function ProductDetails() {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-
         setError("");
-
         setRelatedProducts([]);
 
         const response = await fetch(
@@ -68,15 +55,11 @@ function ProductDetails() {
 
         setProduct(fetchedProduct);
 
-        // Product image
-
         if (fetchedProduct.images?.length > 0) {
           setSelectedImage(fetchedProduct.images[0]);
         } else {
           setSelectedImage("");
         }
-
-        // Product variant / size
 
         if (fetchedProduct.variants?.length > 0) {
           setSelectedSize(fetchedProduct.variants[0]);
@@ -87,7 +70,6 @@ function ProductDetails() {
         setQuantity(1);
       } catch (error) {
         console.error("Product API Error:", error);
-
         setError(error.message);
       } finally {
         setLoading(false);
@@ -104,8 +86,25 @@ function ProductDetails() {
 
     const fetchRelatedProducts = async () => {
       try {
+        const currentCategoryId =
+          typeof product.category === "object"
+            ? product.category?._id
+            : product.category;
+
+        if (!currentCategoryId) {
+          setRelatedProducts([]);
+          return;
+        }
+
+        /*
+          Fetch only products from the current category.
+          limit=5 because the current product can also be
+          included in the response. After removing the
+          current product, maximum 4 related products remain.
+        */
+
         const response = await fetch(
-          "http://localhost:5000/api/products?limit=8"
+          `http://localhost:5000/api/products?category=${currentCategoryId}&limit=5`
         );
 
         const data = await response.json();
@@ -119,33 +118,12 @@ function ProductDetails() {
 
         const products = data.products || [];
 
-        const currentCategoryId =
-          typeof product.category === "object"
-            ? product.category?._id
-            : product.category;
-
+        // Same category products only.
+        // Current product is removed.
         const related = products
-          .filter((item) => {
-            // Exclude current product
-
-            if (String(item._id) === String(id)) {
-              return false;
-            }
-
-            const itemCategoryId =
-              typeof item.category === "object"
-                ? item.category?._id
-                : item.category;
-
-            return (
-              String(itemCategoryId) ===
-              String(currentCategoryId)
-            );
-          })
-          .sort(
-            (a, b) =>
-              new Date(b.createdAt || 0) -
-              new Date(a.createdAt || 0)
+          .filter(
+            (item) =>
+              String(item._id) !== String(id)
           )
           .slice(0, 4);
 
@@ -229,7 +207,6 @@ function ProductDetails() {
       toast.error(
         "This product is currently out of stock."
       );
-
       return;
     }
 
@@ -241,7 +218,6 @@ function ProductDetails() {
       );
 
       navigate("/login");
-
       return;
     }
 
@@ -303,7 +279,6 @@ function ProductDetails() {
       toast.error(
         "This product is currently out of stock."
       );
-
       return;
     }
 
@@ -315,7 +290,6 @@ function ProductDetails() {
       );
 
       navigate("/login");
-
       return;
     }
 
@@ -325,8 +299,8 @@ function ProductDetails() {
 
         product: {
           ...product,
-          quantity: quantity,
-          selectedSize: selectedSize,
+          quantity,
+          selectedSize,
         },
       },
     });
@@ -351,7 +325,7 @@ function ProductDetails() {
 
         <div className="product-details-container">
 
-          {/* LEFT - PRODUCT GALLERY */}
+          {/* ================= LEFT - PRODUCT GALLERY ================= */}
 
           <div className="product-gallery">
 
@@ -368,6 +342,7 @@ function ProductDetails() {
 
             {product.images?.length > 0 && (
               <div className="product-thumbnails">
+
                 {product.images.map(
                   (image, index) => (
                     <button
@@ -391,12 +366,13 @@ function ProductDetails() {
                     </button>
                   )
                 )}
+
               </div>
             )}
 
           </div>
 
-          {/* RIGHT - PRODUCT INFO */}
+          {/* ================= RIGHT - PRODUCT INFO ================= */}
 
           <div className="product-details-info">
 
@@ -423,6 +399,7 @@ function ProductDetails() {
                 </div>
 
                 <div className="size-options">
+
                   {product.variants.map(
                     (size) => (
                       <button
@@ -441,6 +418,7 @@ function ProductDetails() {
                       </button>
                     )
                   )}
+
                 </div>
 
               </div>
@@ -528,7 +506,7 @@ function ProductDetails() {
 
         </div>
 
-        {/* RELATED PRODUCTS */}
+        {/* ================= RELATED PRODUCTS ================= */}
 
         {relatedProducts.length > 0 && (
           <section className="you-may-like">

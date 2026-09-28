@@ -4,7 +4,13 @@
 
 .footer {
   width: 100%;
-  background: #ffffff;
+  background: linear-gradient(
+    110deg,
+    #a8a8a6 0%,
+    #c2c2c0 38%,
+    #e1e1df 68%,
+    #f7f7f5 100%
+  );
   color: #111111;
   box-sizing: border-box;
   padding: 45px 7% 40px;
