@@ -232,7 +232,6 @@ const getBillingAddress = (
     };
   }
 
-  // Fallback for unexpected billingAddress values.
   return {
     fullName:
       shippingAddress?.fullName || "",
@@ -297,8 +296,6 @@ const createOrder = async (orderData) => {
     orderData.paymentMethod || ""
   ).toUpperCase();
 
-  // ================= SHIPPING ADDRESS =================
-
   const shippingAddress =
     orderData.shippingAddress;
 
@@ -307,17 +304,6 @@ const createOrder = async (orderData) => {
       "Shipping address is required"
     );
   }
-
-  // ================= BILLING ADDRESS =================
-  //
-  // If billingAddress is not provided,
-  // shipping address automatically becomes billing address.
-  //
-  // If billingAddress === "same",
-  // shipping address becomes billing address.
-  //
-  // If billingAddress is an object,
-  // separate billing address is saved.
 
   const billingAddress =
     getBillingAddress(
@@ -335,36 +321,24 @@ const createOrder = async (orderData) => {
     billingAddress
   );
 
-  // Validate stock before creating any order
-
   await validateStockAvailability(
     items
   );
 
   let reducedItems = [];
 
-  // COD: reduce stock immediately
-
   if (paymentMethod === "COD") {
     reducedItems =
       await reduceStockForItems(items);
   }
-
-  // Razorpay: stock will be reduced
-  // only after successful payment
 
   let order;
 
   try {
     order = await Order.create({
       ...orderData,
-
-      // Explicitly save shipping address
       shippingAddress,
-
-      // Explicitly save billing address
       billingAddress,
-
       shippingCharge,
       finalAmount,
     });
@@ -377,9 +351,6 @@ const createOrder = async (orderData) => {
 
     throw error;
   }
-
-  // Clear cart only after a COD order
-  // is successfully created
 
   if (paymentMethod === "COD") {
     console.log(
@@ -409,8 +380,6 @@ const createOrder = async (orderData) => {
     }
   }
 
-  // Notify customer
-
   await notificationService.createNotification(
     {
       user: order.user,
@@ -420,8 +389,6 @@ const createOrder = async (orderData) => {
       type: "ORDER",
     }
   );
-
-  // Notify admin
 
   const admin =
     await notificationService.getAdminUser();
@@ -437,8 +404,6 @@ const createOrder = async (orderData) => {
       }
     );
   }
-
-  // Send new order email to admin
 
   if (admin) {
     try {
@@ -467,9 +432,6 @@ const createOrder = async (orderData) => {
       );
     }
   }
-
-  // Send COD order confirmation email
-  // with invoice
 
   if (paymentMethod === "COD") {
     try {
@@ -701,9 +663,9 @@ const getOrderById = async (
 const updateOrderStatus = async (
   orderId,
   orderStatus,
+  courier,
   trackingNumber,
-  trackingUrl,
-  courier
+  trackingUrl
 ) => {
   const existingOrder =
     await Order.findById(
@@ -719,12 +681,6 @@ const updateOrderStatus = async (
       existingOrder.paymentMethod ||
         ""
     ).toUpperCase();
-
-  // Restore stock only if stock
-  // was previously deducted.
-  //
-  // COD -> stock deducted when order was created.
-  // Razorpay -> stock deducted only after payment became PAID.
 
   const stockWasDeducted =
     paymentMethod === "COD" ||
@@ -753,8 +709,6 @@ const updateOrderStatus = async (
   };
 
   // ================= TRACKING UPDATE =================
-  // Tracking information is supported
-  // when the order is shipped.
 
   if (
     orderStatus === "SHIPPED"
@@ -779,9 +733,6 @@ const updateOrderStatus = async (
         ).trim();
     }
 
-    // Courier can be added/updated
-    // when the order is shipped.
-
     if (
       courier !== undefined
     ) {
@@ -802,8 +753,6 @@ const updateOrderStatus = async (
       }
     );
 
-  // Notify customer about status change
-
   if (order) {
     await notificationService.createNotification(
       {
@@ -823,9 +772,9 @@ const updateOrderStatus = async (
 
 const updateOrderTracking = async (
   orderId,
+  courier,
   trackingNumber,
-  trackingUrl,
-  courier
+  trackingUrl
 ) => {
   const existingOrder =
     await Order.findById(
@@ -837,9 +786,6 @@ const updateOrderTracking = async (
       "Order not found"
     );
   }
-
-  // Tracking details can only be managed
-  // after the order is shipped.
 
   if (
     existingOrder.orderStatus !==
@@ -881,9 +827,6 @@ const updateOrderTracking = async (
         trackingUrl
       ).trim();
   }
-
-  // Courier can be added/updated
-  // without changing existing tracking fields.
 
   if (
     courier !== undefined
@@ -943,9 +886,6 @@ const cancelOrderByUser = async (
     );
   }
 
-  // Customer and admin can cancel
-  // only before delivery
-
   if (
     [
       "SHIPPED",
@@ -960,8 +900,6 @@ const cancelOrderByUser = async (
     );
   }
 
-  // Prevent duplicate cancellation
-
   if (
     order.orderStatus ===
     "CANCELLED"
@@ -975,9 +913,6 @@ const cancelOrderByUser = async (
     String(
       order.paymentMethod || ""
     ).toUpperCase();
-
-  // Restore stock only when stock
-  // was already deducted
 
   const stockWasDeducted =
     paymentMethod === "COD" ||
@@ -995,9 +930,6 @@ const cancelOrderByUser = async (
   order.orderStatus =
     "CANCELLED";
 
-  // Razorpay paid order cancellation
-  // needs refund handling
-
   if (
     paymentMethod ===
       "RAZORPAY" &&
@@ -1014,8 +946,6 @@ const cancelOrderByUser = async (
   }
 
   await order.save();
-
-  // Notify customer
 
   await notificationService.createNotification(
     {
@@ -1155,8 +1085,6 @@ const updateReturnStatus =
 
       return order;
     }
-
-    // APPROVED
 
     if (
       order.paymentMethod !==
@@ -1389,8 +1317,6 @@ const verifyRazorpayPayment =
       return null;
     }
 
-    // Prevent duplicate payment callbacks
-
     if (
       existingOrder.paymentStatus ===
       "PAID"
@@ -1411,9 +1337,6 @@ const verifyRazorpayPayment =
         "Razorpay payment verification is allowed only for Razorpay orders"
       );
     }
-
-    // Razorpay: reduce stock only
-    // after successful payment verification.
 
     const reducedItems =
       await reduceStockForItems(
@@ -1449,10 +1372,6 @@ const verifyRazorpayPayment =
           }
         );
 
-      // Another payment callback may
-      // have completed first.
-      // Restore stock reduced by this callback.
-
       if (!order) {
         await restoreStock(
           reducedItems
@@ -1464,9 +1383,6 @@ const verifyRazorpayPayment =
         });
       }
 
-      // Clear cart only after successful
-      // Razorpay payment verification
-
       const cart =
         await Cart.findOne({
           user: userId,
@@ -1477,9 +1393,6 @@ const verifyRazorpayPayment =
 
         await cart.save();
       }
-
-      // Send Razorpay order confirmation
-      // email with invoice
 
       try {
         const user =
