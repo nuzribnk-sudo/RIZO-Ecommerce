@@ -214,6 +214,7 @@ const getOrderStatusData = async () => {
     PENDING: 0,
     CONFIRMED: 0,
     PROCESSING: 0,
+    OUT_FOR_DELIVERY: 0,
     SHIPPED: 0,
     DELIVERED: 0,
     CANCELLED: 0,
