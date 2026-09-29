@@ -625,25 +625,20 @@
 }
 
 .customer-avatar {
-  width: 43px;
-  height: 43px;
-  min-width: 43px;
-
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  flex: 0 0 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  border-radius: 11px;
-
+  border-radius: 9px;
   background: #111;
   color: #fff;
-
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 800;
-
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
 }
-
 .customer-table-user-info {
   min-width: 0;
   flex: 1;

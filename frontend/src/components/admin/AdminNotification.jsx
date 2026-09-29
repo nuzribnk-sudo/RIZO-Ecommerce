@@ -168,13 +168,13 @@ function AdminNotification() {
   // =========================================================
 
   useEffect(() => {
-    // Fetch immediately
+    // Fetch immediately when notification component mounts
     fetchNotifications(true);
 
-    // Check for new notifications every 10 seconds
+    // Check for new notifications every 30 seconds
     const interval = setInterval(() => {
       fetchNotifications(false);
-    }, 10000);
+    }, 30000);
 
     return () => {
       clearInterval(interval);
@@ -365,7 +365,6 @@ function AdminNotification() {
 
   return (
     <div className="notification-wrapper">
-
       {/* =====================================================
           NOTIFICATION BUTTON
       ===================================================== */}
@@ -393,7 +392,6 @@ function AdminNotification() {
 
       {showNotifications && (
         <div className="notification-panel">
-
           {/* =================================================
               HEADER
           ================================================= */}
@@ -442,7 +440,6 @@ function AdminNotification() {
           ================================================= */}
 
           <div className="notification-list">
-
             {/* =================================================
                 LOADING
             ================================================= */}
@@ -459,9 +456,7 @@ function AdminNotification() {
                   Please wait...
                 </p>
               </div>
-
             ) : error ? (
-
               /* =================================================
                  ERROR
               ================================================= */
@@ -477,15 +472,15 @@ function AdminNotification() {
 
                 <button
                   className="notification-retry-btn"
-                  onClick={() => fetchNotifications(true)}
+                  onClick={() =>
+                    fetchNotifications(true)
+                  }
                   type="button"
                 >
                   Try Again
                 </button>
               </div>
-
             ) : notifications.length === 0 ? (
-
               /* =================================================
                  EMPTY
               ================================================= */
@@ -501,9 +496,7 @@ function AdminNotification() {
                   You’re all caught up!
                 </p>
               </div>
-
             ) : (
-
               /* =================================================
                  NOTIFICATIONS
               ================================================= */
@@ -524,7 +517,6 @@ function AdminNotification() {
                     }
                   }}
                 >
-
                   {/* =========================================
                       ICON
                   ========================================= */}
@@ -546,7 +538,6 @@ function AdminNotification() {
                   ========================================= */}
 
                   <div className="notification-content">
-
                     <h4>
                       {notification.title}
                     </h4>
@@ -627,7 +618,6 @@ function AdminNotification() {
                   ========================================= */}
 
                   <div className="notification-item-actions">
-
                     {!notification.isRead && (
                       <span
                         className="notification-unread-dot"
@@ -671,7 +661,6 @@ function AdminNotification() {
                 type="button"
               >
                 Close Notifications
-
                 <i className="bi bi-x-lg"></i>
               </button>
             )}

@@ -1809,3 +1809,18 @@
     padding: 11px 14px;
   }
 }
+/* =========================================================
+   ORDER STATUS - OUT FOR DELIVERY
+========================================================= */
+
+.order-status-badge.out_for_delivery,
+.order-status-badge.out-for-delivery {
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+}
+
+.order-status-badge.out_for_delivery .status-dot,
+.order-status-badge.out-for-delivery .status-dot {
+  background: #f97316;
+}

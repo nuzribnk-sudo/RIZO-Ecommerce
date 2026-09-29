@@ -7,10 +7,10 @@ import React, {
 
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import "./Orders.css";
 
 const API_URL = "http://localhost:5000/api";
-
 const ORDERS_PER_PAGE = 10;
 
 // =========================================================
@@ -60,34 +60,34 @@ const paymentStatusClassMap = {
 const Orders = () => {
   const navigate = useNavigate();
 
-  const [orders, setOrders] = useState([]);
+  // =======================================================
+  // ORDERS STATE
+  // =======================================================
 
+  const [orders, setOrders] = useState([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [paymentFilter, setPaymentFilter] = useState("ALL");
-
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalOrders, setTotalOrders] = useState(0);
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // =========================================================
+  // =======================================================
   // TRACKING STATE
-  // =========================================================
+  // =======================================================
 
   const [trackingOrder, setTrackingOrder] = useState(null);
+  const [courier, setCourier] = useState("");
   const [trackingNumber, setTrackingNumber] = useState("");
   const [trackingUrl, setTrackingUrl] = useState("");
-
   const [trackingLoading, setTrackingLoading] = useState(false);
   const [trackingError, setTrackingError] = useState("");
-  const [trackingMessage, setTrackingMessage] = useState("");
 
-  // =========================================================
+  // =======================================================
   // GET TOKEN
-  // =========================================================
+  // =======================================================
 
   const getToken = useCallback(() => {
     return (
@@ -98,9 +98,9 @@ const Orders = () => {
     );
   }, []);
 
-  // =========================================================
+  // =======================================================
   // FETCH ORDERS
-  // =========================================================
+  // =======================================================
 
   const fetchOrders = useCallback(
     async (page = currentPage) => {
@@ -210,9 +210,9 @@ const Orders = () => {
     ]
   );
 
-  // =========================================================
+  // =======================================================
   // FETCH ON CHANGE
-  // =========================================================
+  // =======================================================
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -228,9 +228,9 @@ const Orders = () => {
     fetchOrders,
   ]);
 
-  // =========================================================
-  // RESET PAGE
-  // =========================================================
+  // =======================================================
+  // RESET PAGE WHEN FILTER CHANGES
+  // =======================================================
 
   useEffect(() => {
     setCurrentPage(1);
@@ -240,9 +240,9 @@ const Orders = () => {
     paymentFilter,
   ]);
 
-  // =========================================================
+  // =======================================================
   // CUSTOMER HELPERS
-  // =========================================================
+  // =======================================================
 
   const getCustomerName = (order) => {
     return (
@@ -270,9 +270,9 @@ const Orders = () => {
     );
   };
 
-  // =========================================================
+  // =======================================================
   // STATUS HELPERS
-  // =========================================================
+  // =======================================================
 
   const getStatusLabel = (status) => {
     return (
@@ -304,9 +304,9 @@ const Orders = () => {
     );
   };
 
-  // =========================================================
+  // =======================================================
   // CURRENCY
-  // =========================================================
+  // =======================================================
 
   const formatCurrency = (amount) => {
     return `₹${Number(
@@ -314,9 +314,9 @@ const Orders = () => {
     ).toLocaleString("en-IN")}`;
   };
 
-  // =========================================================
+  // =======================================================
   // DATE
-  // =========================================================
+  // =======================================================
 
   const formatDate = (date) => {
     if (!date) {
@@ -339,9 +339,9 @@ const Orders = () => {
     );
   };
 
-  // =========================================================
+  // =======================================================
   // ITEM COUNT
-  // =========================================================
+  // =======================================================
 
   const getItemCount = (order) => {
     if (!Array.isArray(order?.items)) {
@@ -359,9 +359,9 @@ const Orders = () => {
     );
   };
 
-  // =========================================================
+  // =======================================================
   // ORDER ID
-  // =========================================================
+  // =======================================================
 
   const getOrderId = (order) => {
     if (!order?._id) {
@@ -373,9 +373,9 @@ const Orders = () => {
       .toUpperCase()}`;
   };
 
-  // =========================================================
+  // =======================================================
   // SUMMARY
-  // =========================================================
+  // =======================================================
 
   const summary = useMemo(() => {
     const pending = orders.filter(
@@ -419,9 +419,9 @@ const Orders = () => {
     };
   }, [orders]);
 
-  // =========================================================
+  // =======================================================
   // FILTER OPTIONS
-  // =========================================================
+  // =======================================================
 
   const statusOptions = [
     {
@@ -477,12 +477,16 @@ const Orders = () => {
     },
   ];
 
-  // =========================================================
+  // =======================================================
   // OPEN TRACKING MODAL
-  // =========================================================
+  // =======================================================
 
   const handleOpenTracking = (order) => {
     setTrackingOrder(order);
+
+    setCourier(
+      order?.courier || ""
+    );
 
     setTrackingNumber(
       order?.trackingNumber || ""
@@ -493,12 +497,11 @@ const Orders = () => {
     );
 
     setTrackingError("");
-    setTrackingMessage("");
   };
 
-  // =========================================================
+  // =======================================================
   // CLOSE TRACKING MODAL
-  // =========================================================
+  // =======================================================
 
   const handleCloseTracking = () => {
     if (trackingLoading) {
@@ -506,22 +509,23 @@ const Orders = () => {
     }
 
     setTrackingOrder(null);
-
+    setCourier("");
     setTrackingNumber("");
     setTrackingUrl("");
-
     setTrackingError("");
-    setTrackingMessage("");
   };
 
-  // =========================================================
+  // =======================================================
   // SAVE TRACKING
-  // =========================================================
+  // =======================================================
 
   const handleSaveTracking = async () => {
     if (!trackingOrder?._id) {
       return;
     }
+
+    const trimmedCourier =
+      courier.trim();
 
     const trimmedTrackingNumber =
       trackingNumber.trim();
@@ -529,22 +533,54 @@ const Orders = () => {
     const trimmedTrackingUrl =
       trackingUrl.trim();
 
-    // -------------------------------------------------------
+    // -----------------------------------------------------
     // VALIDATION
-    // -------------------------------------------------------
+    // -----------------------------------------------------
+
+    if (!trimmedCourier) {
+      setTrackingError(
+        "Please enter the courier name."
+      );
+      return;
+    }
 
     if (!trimmedTrackingNumber) {
       setTrackingError(
         "Please enter the tracking / AWB number."
       );
-
       return;
+    }
+
+    // -----------------------------------------------------
+    // BASIC URL VALIDATION
+    // -----------------------------------------------------
+
+    if (trimmedTrackingUrl) {
+      try {
+        const parsedUrl = new URL(
+          trimmedTrackingUrl
+        );
+
+        if (
+          parsedUrl.protocol !== "http:" &&
+          parsedUrl.protocol !== "https:"
+        ) {
+          setTrackingError(
+            "Tracking URL must start with http:// or https://."
+          );
+          return;
+        }
+      } catch {
+        setTrackingError(
+          "Please enter a valid tracking URL."
+        );
+        return;
+      }
     }
 
     try {
       setTrackingLoading(true);
       setTrackingError("");
-      setTrackingMessage("");
 
       const token = getToken();
 
@@ -552,19 +588,19 @@ const Orders = () => {
         setTrackingError(
           "Authentication required. Please login again."
         );
-
         return;
       }
 
-      // -----------------------------------------------------
-      // UPDATE TRACKING
-      // Backend:
+      // ---------------------------------------------------
+      // BACKEND
       // PATCH /api/orders/:id/tracking
-      // -----------------------------------------------------
+      // ---------------------------------------------------
 
       const response = await axios.patch(
         `${API_URL}/orders/${trackingOrder._id}/tracking`,
         {
+          courier: trimmedCourier,
+
           trackingNumber:
             trimmedTrackingNumber,
 
@@ -574,7 +610,8 @@ const Orders = () => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            "Content-Type":
+              "application/json",
           },
         }
       );
@@ -588,68 +625,96 @@ const Orders = () => {
         );
       }
 
-      // -----------------------------------------------------
-      // UPDATE CURRENT TABLE WITHOUT REFETCH
-      // -----------------------------------------------------
+      // ---------------------------------------------------
+      // UPDATE CURRENT TABLE
+      // ---------------------------------------------------
 
-      setOrders((previousOrders) =>
-        previousOrders.map((order) =>
-          order._id === trackingOrder._id
-            ? {
-                ...order,
-                ...updatedOrder,
-              }
-            : order
-        )
+      setOrders(
+        (previousOrders) =>
+          previousOrders.map(
+            (order) =>
+              order._id ===
+              trackingOrder._id
+                ? {
+                    ...order,
+                    ...updatedOrder,
+                  }
+                : order
+          )
       );
 
-      // -----------------------------------------------------
+      // ---------------------------------------------------
       // UPDATE MODAL
-      // -----------------------------------------------------
+      // ---------------------------------------------------
 
-      setTrackingOrder((previousOrder) => ({
-        ...previousOrder,
-        ...updatedOrder,
-      }));
+      setTrackingOrder(
+        (previousOrder) => ({
+          ...previousOrder,
+          ...updatedOrder,
+        })
+      );
+
+      setCourier(
+        updatedOrder.courier || ""
+      );
 
       setTrackingNumber(
-        updatedOrder.trackingNumber || ""
+        updatedOrder.trackingNumber ||
+          ""
       );
 
       setTrackingUrl(
-        updatedOrder.trackingUrl || ""
+        updatedOrder.trackingUrl ||
+          ""
       );
 
-      setTrackingMessage(
-        "Tracking information saved successfully."
-      );
+      // ---------------------------------------------------
+      // SUCCESS TOAST
+      // ---------------------------------------------------
 
-      setTimeout(() => {
-        setTrackingMessage("");
-      }, 2500);
+      toast.success(
+        "Tracking information saved successfully!"
+      );
     } catch (err) {
       console.error(
         "Save tracking error:",
         err
       );
 
-      setTrackingError(
-        err.response?.data?.message ||
-          err.message ||
-          "Failed to save tracking information."
-      );
+      if (err.response?.status === 401) {
+        setTrackingError(
+          "Your session has expired. Please login again."
+        );
+      } else if (
+        err.response?.status === 403
+      ) {
+        setTrackingError(
+          "You are not authorized to update tracking."
+        );
+      } else if (
+        err.response?.status === 404
+      ) {
+        setTrackingError(
+          "Order or tracking route was not found."
+        );
+      } else {
+        setTrackingError(
+          err.response?.data?.message ||
+            err.message ||
+            "Failed to save tracking information."
+        );
+      }
     } finally {
       setTrackingLoading(false);
     }
   };
 
-  // =========================================================
+  // =======================================================
   // PAGINATION
-  // =========================================================
+  // =======================================================
 
   const pageNumbers = useMemo(() => {
     const pages = [];
-
     const maxVisiblePages = 5;
 
     let startPage = Math.max(
@@ -668,7 +733,9 @@ const Orders = () => {
     ) {
       startPage = Math.max(
         1,
-        endPage - maxVisiblePages + 1
+        endPage -
+          maxVisiblePages +
+          1
       );
     }
 
@@ -714,9 +781,9 @@ const Orders = () => {
     fetchOrders(currentPage);
   };
 
-  // =========================================================
+  // =======================================================
   // LOADING
-  // =========================================================
+  // =======================================================
 
   if (loading) {
     return (
@@ -730,9 +797,9 @@ const Orders = () => {
     );
   }
 
-  // =========================================================
+  // =======================================================
   // UI
-  // =========================================================
+  // =======================================================
 
   return (
     <div className="admin-orders-page">
@@ -837,7 +904,9 @@ const Orders = () => {
             <button
               type="button"
               className="clear-search-btn"
-              onClick={() => setSearch("")}
+              onClick={() =>
+                setSearch("")
+              }
               aria-label="Clear search"
             >
               <i className="bi bi-x"></i>
@@ -901,7 +970,6 @@ const Orders = () => {
 
       {error && (
         <div className="orders-error">
-
           <i className="bi bi-exclamation-circle"></i>
 
           <span>{error}</span>
@@ -912,7 +980,6 @@ const Orders = () => {
           >
             Retry
           </button>
-
         </div>
       )}
 
@@ -969,19 +1036,21 @@ const Orders = () => {
 
                   const hasTracking =
                     Boolean(
-                      order?.trackingNumber ||
+                      order?.courier ||
+                        order?.trackingNumber ||
                         order?.trackingUrl
                     );
 
                   const canAddTracking =
-                    currentStatus === "SHIPPED";
+                    currentStatus ===
+                    "SHIPPED";
 
                   return (
-                    <tr key={order?._id}>
+                    <tr
+                      key={order?._id}
+                    >
 
-                      {/* =================================================
-                          ORDER ID
-                      ================================================= */}
+                      {/* ORDER ID */}
 
                       <td>
                         <span className="order-id">
@@ -989,9 +1058,7 @@ const Orders = () => {
                         </span>
                       </td>
 
-                      {/* =================================================
-                          CUSTOMER
-                      ================================================= */}
+                      {/* CUSTOMER */}
 
                       <td>
                         <div className="customer-cell">
@@ -1020,9 +1087,7 @@ const Orders = () => {
                         </div>
                       </td>
 
-                      {/* =================================================
-                          DATE
-                      ================================================= */}
+                      {/* DATE */}
 
                       <td>
                         <span className="order-date">
@@ -1033,9 +1098,7 @@ const Orders = () => {
                         </span>
                       </td>
 
-                      {/* =================================================
-                          ITEMS
-                      ================================================= */}
+                      {/* ITEMS */}
 
                       <td>
                         <span className="item-count">
@@ -1043,9 +1106,7 @@ const Orders = () => {
                         </span>
                       </td>
 
-                      {/* =================================================
-                          TOTAL
-                      ================================================= */}
+                      {/* TOTAL */}
 
                       <td>
                         <strong className="order-total">
@@ -1058,9 +1119,7 @@ const Orders = () => {
                         </strong>
                       </td>
 
-                      {/* =================================================
-                          PAYMENT
-                      ================================================= */}
+                      {/* PAYMENT */}
 
                       <td>
                         <span
@@ -1076,9 +1135,7 @@ const Orders = () => {
                         </span>
                       </td>
 
-                      {/* =================================================
-                          ORDER STATUS
-                      ================================================= */}
+                      {/* ORDER STATUS */}
 
                       <td>
                         <span
@@ -1094,9 +1151,7 @@ const Orders = () => {
                         </span>
                       </td>
 
-                      {/* =================================================
-                          ACTION
-                      ================================================= */}
+                      {/* ACTION */}
 
                       <td>
                         <div className="order-actions">
@@ -1162,6 +1217,7 @@ const Orders = () => {
                     colSpan="8"
                     className="orders-empty"
                   >
+
                     <div className="empty-orders">
 
                       <i className="bi bi-inbox"></i>
@@ -1179,9 +1235,11 @@ const Orders = () => {
                       </p>
 
                     </div>
+
                   </td>
 
                 </tr>
+
               )}
 
             </tbody>
@@ -1190,9 +1248,9 @@ const Orders = () => {
 
         </div>
 
-        {/* =====================================================
+        {/* ===================================================
             FOOTER
-        ===================================================== */}
+        =================================================== */}
 
         {totalOrders > 0 && (
           <div className="orders-table-footer">
@@ -1222,9 +1280,9 @@ const Orders = () => {
           </div>
         )}
 
-        {/* =====================================================
+        {/* ===================================================
             PAGINATION
-        ===================================================== */}
+        =================================================== */}
 
         {totalPages > 1 && (
           <div className="orders-pagination">
@@ -1301,6 +1359,7 @@ const Orders = () => {
       ===================================================== */}
 
       {trackingOrder && (
+
         <div
           className="tracking-modal-overlay"
           onMouseDown={(event) => {
@@ -1388,6 +1447,44 @@ const Orders = () => {
               </div>
 
               {/* =================================================
+                  COURIER
+              ================================================= */}
+
+              <div className="tracking-form-group">
+
+                <label htmlFor="tracking-courier">
+                  Courier
+                </label>
+
+                <div className="tracking-input-wrapper">
+
+                  <i className="bi bi-truck"></i>
+
+                  <input
+                    id="tracking-courier"
+                    type="text"
+                    placeholder="Enter courier name"
+                    value={courier}
+                    onChange={(event) =>
+                      setCourier(
+                        event.target.value
+                      )
+                    }
+                    disabled={
+                      trackingLoading
+                    }
+                  />
+
+                </div>
+
+                <small>
+                  Enter the courier service
+                  handling this shipment.
+                </small>
+
+              </div>
+
+              {/* =================================================
                   TRACKING NUMBER
               ================================================= */}
 
@@ -1457,26 +1554,11 @@ const Orders = () => {
                 </div>
 
                 <small>
-                  Optional tracking page URL.
+                  Optional tracking page URL
+                  provided by the courier.
                 </small>
 
               </div>
-
-              {/* =================================================
-                  SUCCESS
-              ================================================= */}
-
-              {trackingMessage && (
-                <div className="tracking-success-message">
-
-                  <i className="bi bi-check-circle-fill"></i>
-
-                  <span>
-                    {trackingMessage}
-                  </span>
-
-                </div>
-              )}
 
               {/* =================================================
                   ERROR
@@ -1529,11 +1611,13 @@ const Orders = () => {
                 {trackingLoading ? (
                   <>
                     <span className="tracking-btn-spinner"></span>
+
                     Saving...
                   </>
                 ) : (
                   <>
                     <i className="bi bi-check2"></i>
+
                     Save Tracking
                   </>
                 )}
@@ -1545,6 +1629,7 @@ const Orders = () => {
           </div>
 
         </div>
+
       )}
 
     </div>

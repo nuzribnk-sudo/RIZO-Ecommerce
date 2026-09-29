@@ -931,7 +931,6 @@
 .dashboard-empty.small {
   min-height: 90px;
 }
-
 /* =========================================================
    ORDER STATUS CARD
    ========================================================= */
@@ -940,34 +939,30 @@
   min-width: 0;
 }
 
+
 /* =========================================================
-   ORDER STATUS
-   DONUT TOP
-   DETAILS BOTTOM
+   ORDER STATUS CONTENT
+   DONUT TOP + DETAILS BOTTOM
    ========================================================= */
 
 .order-status-content {
   min-width: 0;
-
   display: flex;
   flex-direction: column;
-
   align-items: center;
-
-  gap: 22px;
-
+  gap: 24px;
   padding: 24px 20px 22px;
 }
 
+
 /* =========================================================
-   DONUT
+   ORDER STATUS DONUT
    ========================================================= */
 
 .order-status-donut {
-  width: 175px;
-  height: 175px;
-
-  flex: 0 0 175px;
+  width: 190px;
+  height: 190px;
+  flex: 0 0 190px;
 
   position: relative;
 
@@ -977,32 +972,80 @@
 
   border-radius: 50%;
 
+  /*
+    IMPORTANT:
+    Conic-gradient comes from JSX inline style.
+    Do not add another background here.
+  */
+
   box-shadow:
-    0 10px 25px rgba(0, 0, 0, 0.08);
+    0 10px 24px rgba(0, 0, 0, 0.08);
+
+  isolation: isolate;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
-.order-status-donut::after {
+
+/* =========================================================
+   OUTER DONUT RING
+   ========================================================= */
+
+.order-status-donut::before {
   content: "";
 
   position: absolute;
-
-  inset: 8px;
+  inset: -5px;
 
   border-radius: 50%;
 
+  border: 1px solid #e8e8e8;
+
   pointer-events: none;
+
+  z-index: -1;
 }
+
+
+/* =========================================================
+   REMOVE INNER WHITE LINE
+   ========================================================= */
+
+/*
+   IMPORTANT:
+   The old ::after was creating the unwanted
+   white line inside the donut.
+*/
+
+.order-status-donut::after {
+  display: none;
+}
+
+
+/* =========================================================
+   DONUT HOVER
+   ========================================================= */
+
+.order-status-donut:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 16px 32px rgba(0, 0, 0, 0.12);
+}
+
 
 /* =========================================================
    DONUT CENTER
    ========================================================= */
 
 .order-status-donut-center {
-  width: 108px;
-  height: 108px;
+  width: 116px;
+  height: 116px;
 
   position: relative;
-  z-index: 2;
+  z-index: 5;
 
   display: flex;
   flex-direction: column;
@@ -1013,34 +1056,56 @@
 
   background: #ffffff;
 
+  /*
+     No thick inner ring.
+     Keeps the donut clean and standard.
+  */
+
+  border: none;
+
   box-shadow:
-    inset 0 0 0 1px #ededee,
-    0 5px 16px rgba(0, 0, 0, 0.07);
+    0 3px 12px rgba(0, 0, 0, 0.08);
 }
+
+
+/* =========================================================
+   TOTAL ORDERS NUMBER
+   ========================================================= */
 
 .order-status-donut-center strong {
   color: #111111;
 
-  font-size: 23px;
+  font-size: 27px;
   font-weight: 800;
 
-  line-height: 1.1;
+  line-height: 1;
+
+  letter-spacing: -0.8px;
 }
 
-.order-status-donut-center span {
-  margin-top: 5px;
 
-  color: #8a8a8a;
+/* =========================================================
+   TOTAL ORDERS LABEL
+   ========================================================= */
+
+.order-status-donut-center span {
+  margin-top: 8px;
+
+  color: #858585;
 
   font-size: 9px;
-  font-weight: 600;
+  font-weight: 700;
+
+  letter-spacing: 0.6px;
+
+  text-transform: uppercase;
 
   text-align: center;
 }
 
+
 /* =========================================================
    ORDER STATUS LIST
-   DETAILS UNDER DONUT
    ========================================================= */
 
 .order-status-list {
@@ -1049,10 +1114,16 @@
 
   display: grid;
 
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
 
-  gap: 8px;
+  gap: 10px;
 }
+
+
+/* =========================================================
+   ORDER STATUS ROW
+   ========================================================= */
 
 .order-status-row {
   min-width: 0;
@@ -1063,22 +1134,41 @@
 
   gap: 10px;
 
-  padding: 9px 10px;
+  padding: 11px 12px;
 
   border: 1px solid #eeeeef;
-  border-radius: 9px;
+
+  border-radius: 11px;
 
   background: #ffffff;
 
   transition:
+    transform 0.2s ease,
     background 0.2s ease,
-    border-color 0.2s ease;
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
+
+/* =========================================================
+   ROW HOVER
+   ========================================================= */
+
 .order-status-row:hover {
+  transform: translateY(-1px);
+
   background: #fafafa;
-  border-color: #e2e2e4;
+
+  border-color: #dedede;
+
+  box-shadow:
+    0 5px 14px rgba(0, 0, 0, 0.06);
 }
+
+
+/* =========================================================
+   STATUS NAME
+   ========================================================= */
 
 .order-status-name {
   min-width: 0;
@@ -1086,33 +1176,43 @@
   display: flex;
   align-items: center;
 
-  gap: 8px;
+  gap: 9px;
 
-  color: #555555;
+  color: #4f4f4f;
 
   font-size: 10px;
   font-weight: 600;
 }
 
+
 .order-status-name > span:last-child {
   min-width: 0;
 
   white-space: nowrap;
+
   overflow: hidden;
+
   text-overflow: ellipsis;
 }
+
+
+/* =========================================================
+   STATUS COUNT
+   ========================================================= */
 
 .order-status-row strong {
   flex: 0 0 auto;
 
-  color: #171717;
+  color: #111111;
 
   font-size: 11px;
+
   font-weight: 800;
 }
 
 /* =========================================================
    STATUS DOT
+   SOLID COLOR DOTS
    ========================================================= */
 
 .status-dot {
@@ -1122,7 +1222,35 @@
   flex: 0 0 9px;
 
   border-radius: 50%;
+
+  display: block;
+
+  /* Remove old grey/white ring */
+  border: none;
+
+  box-shadow: none;
+
+  opacity: 1;
+
+  transition:
+    transform 0.2s ease;
 }
+
+
+/* =========================================================
+   STATUS DOT HOVER
+   ========================================================= */
+
+.order-status-row:hover .status-dot {
+  transform: scale(1.15);
+
+  box-shadow: none;
+}
+
+
+/* =========================================================
+   STATUS COLORS
+   ========================================================= */
 
 .status-pending {
   background: #f2a900;
@@ -1136,6 +1264,10 @@
   background: #7567df;
 }
 
+.status-out_for_delivery {
+  background: #e58a2b;
+}
+
 .status-shipped {
   background: #21a68b;
 }
@@ -1147,7 +1279,213 @@
 .status-cancelled {
   background: #e96b6b;
 }
+/* =========================================================
+   OPTIONAL COLOR GLOW
+   ========================================================= */
 
+.status-pending {
+  box-shadow:
+    0 0 0 3px rgba(242, 169, 0, 0.12);
+}
+
+.status-confirmed {
+  box-shadow:
+    0 0 0 3px rgba(66, 133, 232, 0.12);
+}
+
+.status-processing {
+  box-shadow:
+    0 0 0 3px rgba(117, 103, 223, 0.12);
+}
+
+.status-out_for_delivery {
+  box-shadow:
+    0 0 0 3px rgba(229, 138, 43, 0.12);
+}
+
+.status-shipped {
+  box-shadow:
+    0 0 0 3px rgba(33, 166, 139, 0.12);
+}
+
+.status-delivered {
+  box-shadow:
+    0 0 0 3px rgba(95, 196, 66, 0.12);
+}
+
+.status-cancelled {
+  box-shadow:
+    0 0 0 3px rgba(233, 107, 107, 0.12);
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+  .order-status-content {
+    gap: 20px;
+
+    padding:
+      22px 16px 20px;
+  }
+
+  .order-status-donut {
+    width: 175px;
+    height: 175px;
+
+    flex-basis: 175px;
+  }
+
+  .order-status-donut-center {
+    width: 108px;
+    height: 108px;
+  }
+
+  .order-status-donut-center strong {
+    font-size: 24px;
+  }
+
+  .order-status-list {
+    gap: 8px;
+  }
+
+  .order-status-row {
+    padding: 10px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+  .order-status-content {
+    gap: 18px;
+
+    padding:
+      20px 13px 18px;
+  }
+
+  .order-status-donut {
+    width: 160px;
+    height: 160px;
+
+    flex-basis: 160px;
+  }
+
+  .order-status-donut-center {
+    width: 100px;
+    height: 100px;
+  }
+
+  .order-status-donut-center strong {
+    font-size: 22px;
+  }
+
+  .order-status-donut-center span {
+    margin-top: 6px;
+
+    font-size: 8px;
+  }
+
+  .order-status-list {
+    grid-template-columns: 1fr 1fr;
+
+    gap: 7px;
+  }
+
+  .order-status-row {
+    padding: 9px;
+
+    gap: 6px;
+
+    border-radius: 9px;
+  }
+
+  .order-status-name {
+    gap: 7px;
+
+    font-size: 9px;
+  }
+
+  .order-status-row strong {
+    font-size: 10px;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+
+    flex-basis: 8px;
+  }
+}
+
+
+/* =========================================================
+   SMALL PHONE — 390px
+   ========================================================= */
+
+@media (max-width: 390px) {
+
+  .order-status-content {
+    gap: 16px;
+
+    padding:
+      18px 10px 16px;
+  }
+
+  .order-status-donut {
+    width: 150px;
+    height: 150px;
+
+    flex-basis: 150px;
+  }
+
+  .order-status-donut-center {
+    width: 94px;
+    height: 94px;
+  }
+
+  .order-status-donut-center strong {
+    font-size: 20px;
+  }
+
+  .order-status-donut-center span {
+    font-size: 8px;
+  }
+
+  .order-status-list {
+    gap: 6px;
+  }
+
+  .order-status-row {
+    padding: 8px;
+
+    border-radius: 8px;
+  }
+
+  .order-status-name {
+    gap: 6px;
+
+    font-size: 8.5px;
+  }
+
+  .order-status-row strong {
+    font-size: 10px;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+
+    flex-basis: 7px;
+  }
+}
 /* =========================================================
    STOCK GRID
    ========================================================= */
@@ -1571,6 +1909,11 @@
   color: #b97900;
 }
 
+.order-status-badge.pending {
+  background: #fff5df;
+  color: #b97900;
+}
+
 .order-status-badge.confirmed {
   background: #edf4ff;
   color: #3978d1;
@@ -1579,6 +1922,11 @@
 .order-status-badge.processing {
   background: #f1eeff;
   color: #6958c9;
+}
+
+.order-status-badge.out_for_delivery {
+  background: #fff3e4;
+  color: #d87918;
 }
 
 .order-status-badge.shipped {
@@ -1595,7 +1943,6 @@
   background: #fff0f0;
   color: #c33d3d;
 }
-
 /* =========================================================
    MINI SUMMARY
    ========================================================= */
