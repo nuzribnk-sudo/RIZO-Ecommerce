@@ -4,7 +4,6 @@ import React, {
   useMemo,
   useState,
 } from "react";
-
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 
@@ -36,6 +35,7 @@ function Dashboard() {
     PENDING: 0,
     CONFIRMED: 0,
     PROCESSING: 0,
+    OUT_FOR_DELIVERY: 0,
     SHIPPED: 0,
     DELIVERED: 0,
     CANCELLED: 0,
@@ -193,6 +193,9 @@ function Dashboard() {
       PENDING: Number(statusData.PENDING || 0),
       CONFIRMED: Number(statusData.CONFIRMED || 0),
       PROCESSING: Number(statusData.PROCESSING || 0),
+      OUT_FOR_DELIVERY: Number(
+        statusData.OUT_FOR_DELIVERY || 0
+      ),
       SHIPPED: Number(statusData.SHIPPED || 0),
       DELIVERED: Number(statusData.DELIVERED || 0),
       CANCELLED: Number(statusData.CANCELLED || 0),
@@ -340,7 +343,6 @@ function Dashboard() {
       }
 
       const value = String(period);
-
       const parsedDate = new Date(value);
 
       if (!Number.isNaN(parsedDate.getTime())) {
@@ -449,6 +451,7 @@ function Dashboard() {
     PENDING: "#f2a900",
     CONFIRMED: "#4285e8",
     PROCESSING: "#7567df",
+    OUT_FOR_DELIVERY: "#06b6d4",
     SHIPPED: "#21a68b",
     DELIVERED: "#5fc442",
     CANCELLED: "#e96b6b",
@@ -501,7 +504,7 @@ function Dashboard() {
 
     return String(status)
       .toLowerCase()
-      .replace(/\_/g, " ")
+      .replace(/_/g, " ")
       .replace(/\b\w/g, (letter) =>
         letter.toUpperCase()
       );
@@ -516,7 +519,6 @@ function Dashboard() {
       <div className="dashboard-page">
         <div className="dashboard-loading">
           <div className="dashboard-spinner"></div>
-
           <p>Loading dashboard...</p>
         </div>
       </div>
@@ -550,7 +552,6 @@ function Dashboard() {
           onClick={loadDashboard}
         >
           <i className="bi bi-arrow-clockwise"></i>
-
           <span>Refresh</span>
         </button>
       </div>
@@ -756,6 +757,7 @@ function Dashboard() {
 
             {highestRevenuePeriod && (
               <div className="revenue-highest-info">
+
                 <span>Highest Period</span>
 
                 <strong>
@@ -763,6 +765,7 @@ function Dashboard() {
                     highestRevenuePeriod.revenue
                   )}
                 </strong>
+
               </div>
             )}
 
@@ -771,7 +774,6 @@ function Dashboard() {
           {/* REVENUE CHART */}
 
           {revenueLoading ? (
-
             <div className="dashboard-section-loading">
               <div className="dashboard-spinner"></div>
 
@@ -779,21 +781,15 @@ function Dashboard() {
                 Loading revenue...
               </span>
             </div>
-
           ) : revenueData.length === 0 ? (
-
             <div className="dashboard-empty">
-
               <i className="bi bi-bar-chart"></i>
 
               <p>
                 No revenue data available.
               </p>
-
             </div>
-
           ) : (
-
             <div className="revenue-chart-container">
 
               {/* Y AXIS */}
@@ -838,7 +834,6 @@ function Dashboard() {
                 </div>
 
                 {revenueData.map((item, index) => {
-
                   const revenue = Number(
                     item.revenue || 0
                   );
@@ -859,9 +854,7 @@ function Dashboard() {
                   return (
                     <div
                       className={`revenue-bar-item ${
-                        isHighest
-                          ? "highest"
-                          : ""
+                        isHighest ? "highest" : ""
                       }`}
                       key={`${item.period}-${index}`}
                     >
@@ -926,7 +919,7 @@ function Dashboard() {
 
           </div>
 
-          {/* FIRST DONUT STYLE */}
+          {/* DONUT */}
 
           <div className="order-status-content">
 
@@ -960,7 +953,6 @@ function Dashboard() {
 
               {Object.entries(orderStatus).map(
                 ([status, count]) => (
-
                   <div
                     className="order-status-row"
                     key={status}
@@ -968,8 +960,14 @@ function Dashboard() {
 
                     <div className="order-status-name">
 
+                      {/* COLOURED DOT */}
+
                       <span
                         className={`status-dot status-${status.toLowerCase()}`}
+                        style={{
+                          backgroundColor:
+                            statusColors[status],
+                        }}
                       ></span>
 
                       <span>
@@ -985,7 +983,6 @@ function Dashboard() {
                     </strong>
 
                   </div>
-
                 )
               )}
 
@@ -1012,7 +1009,6 @@ function Dashboard() {
             <div>
               <h2>
                 <i className="bi bi-exclamation-triangle"></i>
-
                 Low Stock
               </h2>
 
@@ -1031,7 +1027,6 @@ function Dashboard() {
 
             {stockAlerts.lowStockProducts.length ===
             0 ? (
-
               <div className="dashboard-empty small">
 
                 <i className="bi bi-check-circle"></i>
@@ -1041,12 +1036,9 @@ function Dashboard() {
                 </p>
 
               </div>
-
             ) : (
-
               stockAlerts.lowStockProducts.map(
                 (product) => (
-
                   <div
                     className="stock-item"
                     key={product._id}
@@ -1077,15 +1069,11 @@ function Dashboard() {
                     </div>
 
                   </div>
-
                 )
               )
-
             )}
 
           </div>
-
-          {/* GO TO INVENTORY */}
 
           <button
             type="button"
@@ -1110,7 +1098,6 @@ function Dashboard() {
             <div>
               <h2>
                 <i className="bi bi-x-circle"></i>
-
                 Out of Stock
               </h2>
 
@@ -1129,7 +1116,6 @@ function Dashboard() {
 
             {stockAlerts.outOfStockProducts.length ===
             0 ? (
-
               <div className="dashboard-empty small">
 
                 <i className="bi bi-check-circle"></i>
@@ -1139,12 +1125,9 @@ function Dashboard() {
                 </p>
 
               </div>
-
             ) : (
-
               stockAlerts.outOfStockProducts.map(
                 (product) => (
-
                   <div
                     className="stock-item"
                     key={product._id}
@@ -1175,15 +1158,11 @@ function Dashboard() {
                     </div>
 
                   </div>
-
                 )
               )
-
             )}
 
           </div>
-
-          {/* GO TO INVENTORY */}
 
           <button
             type="button"
@@ -1232,7 +1211,6 @@ function Dashboard() {
         </div>
 
         {recentOrders.length === 0 ? (
-
           <div className="dashboard-empty">
 
             <i className="bi bi-cart-x"></i>
@@ -1242,9 +1220,7 @@ function Dashboard() {
             </p>
 
           </div>
-
         ) : (
-
           <div className="orders-table-wrapper">
 
             <table className="dashboard-orders-table">
@@ -1263,7 +1239,6 @@ function Dashboard() {
               <tbody>
 
                 {recentOrders.map((order) => (
-
                   <tr key={order.orderId}>
 
                     <td>
@@ -1310,8 +1285,7 @@ function Dashboard() {
                       <span
                         className={`payment-status ${
                           String(
-                            order.paymentStatus ||
-                              ""
+                            order.paymentStatus || ""
                           ).toLowerCase()
                         }`}
                       >
@@ -1327,8 +1301,7 @@ function Dashboard() {
                       <span
                         className={`order-status-badge ${
                           String(
-                            order.orderStatus ||
-                              ""
+                            order.orderStatus || ""
                           ).toLowerCase()
                         }`}
                       >
@@ -1340,7 +1313,6 @@ function Dashboard() {
                     </td>
 
                   </tr>
-
                 ))}
 
               </tbody>
@@ -1348,7 +1320,6 @@ function Dashboard() {
             </table>
 
           </div>
-
         )}
 
       </section>
@@ -1368,6 +1339,7 @@ function Dashboard() {
           </div>
 
           <div>
+
             <span>
               Pending Orders
             </span>
@@ -1377,6 +1349,7 @@ function Dashboard() {
                 "en-IN"
               )}
             </strong>
+
           </div>
 
         </div>
@@ -1390,6 +1363,7 @@ function Dashboard() {
           </div>
 
           <div>
+
             <span>
               Delivered Orders
             </span>
@@ -1399,6 +1373,7 @@ function Dashboard() {
                 "en-IN"
               )}
             </strong>
+
           </div>
 
         </div>
@@ -1412,6 +1387,7 @@ function Dashboard() {
           </div>
 
           <div>
+
             <span>
               Cancelled Orders
             </span>
@@ -1421,6 +1397,7 @@ function Dashboard() {
                 "en-IN"
               )}
             </strong>
+
           </div>
 
         </div>
@@ -1434,6 +1411,7 @@ function Dashboard() {
           </div>
 
           <div>
+
             <span>
               Paid Orders
             </span>
@@ -1443,6 +1421,7 @@ function Dashboard() {
                 "en-IN"
               )}
             </strong>
+
           </div>
 
         </div>

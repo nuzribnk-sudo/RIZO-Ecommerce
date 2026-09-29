@@ -227,8 +227,8 @@
   gap: 10px;
   border: 1px solid #dddddd;
   border-radius: 10px;
-  background: #ffffff;
-  color: #111111;
+  background: #111;
+  color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.025);
   cursor: pointer;
   font-size: 13px;
@@ -542,43 +542,172 @@
   font-weight: 720;
   text-align: right;
 }
+/* =========================================================
+   PAYMENT STATUS
+   ========================================================= */
 
-.payment-status,
-.refund-status {
+.payment-status-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  width: 102px;
+  min-height: 40px;
+  padding: 0 32px 0 11px;
+
+  border: 1px solid #cfd8d2;
+  border-radius: 8px;
+
+  background-color: #f2faf4;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #777 50%),
+    linear-gradient(135deg, #777 50%, transparent 50%);
+  background-position:
+    calc(100% - 13px) 16px,
+    calc(100% - 9px) 16px;
+  background-size:
+    4px 4px,
+    4px 4px;
+  background-repeat: no-repeat;
+
+  color: #16803c;
+  font-size: 12px;
+  font-weight: 800;
+
+  cursor: pointer;
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.payment-status-select:hover {
+  border-color: #9db9a4;
+  transform: translateY(-1px);
+}
+
+.payment-status-select:focus {
+  border-color: #111;
+  box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.07);
+}
+
+/* PAID */
+
+.payment-status-select.paid {
+  color: #16803c;
+  border-color: #b9ddc4;
+  background-color: #f2faf4;
+
+  background-image:
+    linear-gradient(45deg, transparent 50%, #16803c 50%),
+    linear-gradient(135deg, #16803c 50%, transparent 50%);
+}
+
+/* PENDING */
+
+.payment-status-select.pending {
+  color: #9a6900;
+  border-color: #ead79e;
+  background-color: #fffaf0;
+
+  background-image:
+    linear-gradient(45deg, transparent 50%, #9a6900 50%),
+    linear-gradient(135deg, #9a6900 50%, transparent 50%);
+}
+
+/* FAILED */
+
+.payment-status-select.failed {
+  color: #c62828;
+  border-color: #edc1c1;
+  background-color: #fff5f5;
+
+  background-image:
+    linear-gradient(45deg, transparent 50%, #c62828 50%),
+    linear-gradient(135deg, #c62828 50%, transparent 50%);
+}
+
+.payment-status-select:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+
+/* =========================================================
+   PAYMENT STATUS BADGE
+   ========================================================= */
+
+.payment-status {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  max-width: 100%;
-  padding: 5px 9px;
+
+  min-width: 72px;
+  min-height: 30px;
+  padding: 5px 11px;
+
   border-radius: 999px;
-  background: #f2f2f2;
-  color: #303030;
+
   font-size: 10px;
+  font-weight: 800;
   line-height: 1;
-  font-weight: 750;
-  white-space: normal;
-  text-align: center;
+
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.025);
 }
 
-.payment-status.paid,
-.refund-status.completed {
-  background: #ebf7ef;
-  color: #21663b;
+.payment-status.paid {
+  background: #eaf8ed;
+  color: #16803c;
 }
 
-.payment-status.failed,
-.refund-status.failed,
-.refund-status.rejected {
+.payment-status.pending {
+  background: #fff6dd;
+  color: #9a6900;
+}
+
+.payment-status.failed {
   background: #fff0f0;
-  color: #a42b2b;
+  color: #c62828;
 }
 
-.payment-status.pending,
-.refund-status.pending,
-.refund-status.processing {
-  background: #fff7e7;
-  color: #8c6417;
+
+/* =========================================================
+   PAYMENT NOTE
+   ========================================================= */
+
+.payment-status-note {
+  width: 100%;
+  margin: 8px 0 5px;
+
+  padding: 9px 11px;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+
+  border: 1px solid #e9e9e9;
+  border-radius: 7px;
+
+  background: #f7f7f7;
+  color: #777;
+
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.5;
 }
+
+.payment-status-note i {
+  flex: 0 0 auto;
+  margin-top: 2px;
+
+  color: #666;
+  font-size: 11px;
+}
+
 
 /* =========================================================
    SHIPPING ADDRESS
@@ -586,9 +715,11 @@
 
 .shipping-address {
   min-width: 0;
+
   display: flex;
   flex-direction: column;
   gap: 8px;
+
   color: #4f4f4f;
   font-size: 12px;
   line-height: 1.55;
@@ -601,8 +732,87 @@
 }
 
 .shipping-address span {
+  display: block;
+
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 640px) {
+  .payment-status-select {
+    width: 96px;
+    min-height: 36px;
+
+    padding: 0 28px 0 9px;
+
+    font-size: 10px;
+
+    background-position:
+      calc(100% - 12px) 14px,
+      calc(100% - 8px) 14px;
+  }
+
+  .payment-status-note {
+    margin-top: 7px;
+    padding: 8px 9px;
+
+    font-size: 9px;
+    line-height: 1.45;
+  }
+
+  .payment-status-note i {
+    font-size: 10px;
+  }
+
+  .shipping-address {
+    font-size: 10px;
+    line-height: 1.5;
+  }
+
+  .shipping-address strong {
+    font-size: 11px;
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 390px) {
+  .payment-status-select {
+    width: 88px;
+    min-height: 34px;
+
+    padding-left: 8px;
+    padding-right: 25px;
+
+    font-size: 9px;
+
+    background-position:
+      calc(100% - 11px) 13px,
+      calc(100% - 7px) 13px;
+  }
+
+  .payment-status-note {
+    padding: 7px 8px;
+    gap: 6px;
+
+    font-size: 8.5px;
+  }
+
+  .shipping-address {
+    font-size: 9px;
+  }
+
+  .shipping-address strong {
+    font-size: 10px;
+  }
 }
 
 /* =========================================================
@@ -717,9 +927,14 @@
   border-bottom: 0;
 }
 
+/* =========================
+   PRODUCT IMAGE
+========================= */
+
 .product-image {
   width: 72px;
   height: 82px;
+  flex-shrink: 0;
   overflow: hidden;
   border: 1px solid #e9e9e9;
   border-radius: 11px;
@@ -732,6 +947,7 @@
 .product-image img {
   width: 100%;
   height: 100%;
+  display: block;
   object-fit: cover;
 }
 
@@ -744,6 +960,10 @@
   color: #aaaaaa;
   font-size: 21px;
 }
+
+/* =========================
+   PRODUCT INFO
+========================= */
 
 .product-info {
   min-width: 0;
@@ -770,6 +990,10 @@
   word-break: break-word;
 }
 
+/* =========================
+   QUANTITY + PRICE
+========================= */
+
 .product-quantity,
 .product-price {
   min-width: 0;
@@ -780,7 +1004,12 @@
   text-align: right;
 }
 
-.product-quantity span,
+/* Hide only "Qty" */
+.product-quantity span {
+  display: none;
+}
+
+/* Keep "Price" */
 .product-price span {
   color: #838383;
   font-size: 9px;
@@ -798,6 +1027,10 @@
   font-weight: 800;
 }
 
+/* =========================
+   EMPTY PRODUCTS
+========================= */
+
 .empty-products {
   min-height: 130px;
   padding: 20px;
@@ -813,6 +1046,186 @@
 
 .empty-products > i {
   font-size: 25px;
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 768px) {
+  .ordered-product {
+    grid-template-columns: 64px minmax(0, 1fr) 65px 90px;
+    gap: 12px;
+  }
+
+  .product-image {
+    width: 64px;
+    height: 74px;
+  }
+
+  .product-info strong {
+    font-size: 12px;
+  }
+
+  .product-info span {
+    font-size: 9px;
+  }
+
+  .product-quantity strong,
+  .product-price strong {
+    font-size: 11px;
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 560px) {
+  .ordered-product {
+    position: relative;
+    grid-template-columns: 58px minmax(0, 1fr);
+    gap: 12px;
+    padding: 14px 0;
+  }
+
+  .product-image {
+    width: 58px;
+    height: 68px;
+  }
+
+  .product-info {
+    padding-right: 70px;
+  }
+
+  .product-info strong {
+    font-size: 12px;
+  }
+
+  .product-info span {
+    font-size: 9px;
+  }
+
+  .product-quantity {
+    position: absolute;
+    right: 0;
+    bottom: 15px;
+  }
+
+  .product-price {
+    position: absolute;
+    right: 0;
+    top: 15px;
+  }
+
+  .product-quantity strong,
+  .product-price strong {
+    font-size: 11px;
+  }
+}
+
+/* =========================
+   SMALL PHONE
+========================= */
+
+@media (max-width: 390px) {
+  .ordered-product {
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .product-image {
+    width: 52px;
+    height: 62px;
+    border-radius: 9px;
+  }
+
+  .product-info {
+    padding-right: 62px;
+  }
+
+  .product-info strong {
+    font-size: 11px;
+  }
+
+  .product-info span {
+    font-size: 8.5px;
+  }
+
+  .product-quantity {
+    bottom: 13px;
+  }
+
+  .product-price {
+    top: 13px;
+  }
+
+  .product-quantity strong,
+  .product-price strong {
+    font-size: 10px;
+  }
+}
+/* =========================================
+   QTY - CLEAN STYLE
+========================================= */
+.product-quantity {
+  min-width: 76px;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 5px !important;
+  text-align: right !important;
+
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+}
+
+.product-quantity span {
+  display: inline !important;
+  width: auto !important;
+  height: auto !important;
+
+  color: #838383 !important;
+  background: transparent !important;
+
+  font-size: 9px !important;
+  line-height: 1 !important;
+  font-weight: 700 !important;
+
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.product-quantity strong {
+  display: inline !important;
+  width: auto !important;
+  height: auto !important;
+
+  color: #171717 !important;
+  background: transparent !important;
+
+  font-size: 11px !important;
+  line-height: 1 !important;
+  font-weight: 800 !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
 /* =========================================================

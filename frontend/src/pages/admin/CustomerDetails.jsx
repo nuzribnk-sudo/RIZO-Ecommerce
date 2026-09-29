@@ -4,12 +4,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-
-import {
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
-
+import { useLocation, useNavigate } from "react-router-dom";
 import "./CustomerDetails.css";
 
 const API_URL = "http://localhost:5000/api";
@@ -53,13 +48,6 @@ const CustomerDetails = () => {
   // =========================================================
   // FETCH CUSTOMER ORDERS
   // =========================================================
-  // Backend:
-  // GET /api/orders/all?page=1
-  //
-  // Backend default limit = 10.
-  // Therefore we fetch every available page and then
-  // filter orders belonging to the selected customer.
-  // =========================================================
 
   const fetchCustomerOrders = useCallback(async () => {
     if (!customer?._id) {
@@ -74,9 +62,7 @@ const CustomerDetails = () => {
       const token = getToken();
 
       if (!token) {
-        throw new Error(
-          "Authentication token not found."
-        );
+        throw new Error("Authentication token not found.");
       }
 
       const headers = {
@@ -101,9 +87,7 @@ const CustomerDetails = () => {
       let firstData = {};
 
       try {
-        firstData = firstText
-          ? JSON.parse(firstText)
-          : {};
+        firstData = firstText ? JSON.parse(firstText) : {};
       } catch (error) {
         throw new Error(
           "Invalid response received from orders API."
@@ -197,9 +181,7 @@ const CustomerDetails = () => {
             return false;
           }
 
-          return (
-            String(orderUserId) === customerId
-          );
+          return String(orderUserId) === customerId;
         }
       );
 
@@ -268,18 +250,21 @@ const CustomerDetails = () => {
   // =========================================================
 
   const totalSpent = useMemo(() => {
-    return orders.reduce((total, order) => {
-      const amount = Number(
-        order?.finalAmount ??
-          order?.totalAmount ??
-          0
-      );
+    return orders.reduce(
+      (total, order) => {
+        const amount = Number(
+          order?.finalAmount ??
+            order?.totalAmount ??
+            0
+        );
 
-      return (
-        total +
-        (Number.isFinite(amount) ? amount : 0)
-      );
-    }, 0);
+        return (
+          total +
+          (Number.isFinite(amount) ? amount : 0)
+        );
+      },
+      0
+    );
   }, [orders]);
 
   // =========================================================
@@ -617,17 +602,6 @@ const CustomerDetails = () => {
 
       <div className="customer-details-topbar">
         <div>
-          <button
-            type="button"
-            className="customer-details-back-link"
-            onClick={() =>
-              navigate("/admin/customers")
-            }
-          >
-            <i className="bi bi-arrow-left"></i>
-            Customers
-          </button>
-
           <h1>Customer Details</h1>
 
           <p>
@@ -643,13 +617,11 @@ const CustomerDetails = () => {
 
       <section className="customer-profile-card">
         <div className="customer-profile-left">
-
-          <div className="customer-avatar">
+          <div className="customer-details-avatar">
             {getInitials(customerName)}
           </div>
 
           <div className="customer-profile-info">
-
             <div className="customer-name-row">
               <h2>{customerName}</h2>
 
@@ -681,6 +653,7 @@ const CustomerDetails = () => {
           </div>
         </div>
 
+        {/* ONLY ONE BACK BUTTON */}
         <div className="customer-profile-actions">
           <button
             type="button"
@@ -754,9 +727,7 @@ const CustomerDetails = () => {
             </span>
 
             <strong>
-              {formatDate(
-                customer.createdAt
-              )}
+              {formatDate(customer.createdAt)}
             </strong>
           </div>
         </div>
@@ -783,7 +754,6 @@ const CustomerDetails = () => {
             </strong>
           </div>
         </div>
-
       </section>
 
       {/* =====================================================
@@ -792,17 +762,12 @@ const CustomerDetails = () => {
 
       <div className="customer-details-grid">
 
-        {/* ===================================================
-            PERSONAL INFORMATION
-        =================================================== */}
+        {/* PERSONAL INFORMATION */}
 
         <section className="customer-info-card">
-
           <div className="customer-section-header">
             <div>
-              <h3>
-                Personal Information
-              </h3>
+              <h3>Personal Information</h3>
 
               <p>
                 Customer account information
@@ -816,6 +781,7 @@ const CustomerDetails = () => {
 
             <div className="customer-info-row">
               <span>Name</span>
+
               <strong>
                 {customerName}
               </strong>
@@ -823,6 +789,7 @@ const CustomerDetails = () => {
 
             <div className="customer-info-row">
               <span>Email</span>
+
               <strong>
                 {customerEmail}
               </strong>
@@ -830,6 +797,7 @@ const CustomerDetails = () => {
 
             <div className="customer-info-row">
               <span>Phone</span>
+
               <strong>
                 {customerPhone}
               </strong>
@@ -837,6 +805,7 @@ const CustomerDetails = () => {
 
             <div className="customer-info-row">
               <span>Role</span>
+
               <strong>
                 {customer.role || "user"}
               </strong>
@@ -894,9 +863,7 @@ const CustomerDetails = () => {
               <span>Joined</span>
 
               <strong>
-                {formatDate(
-                  customer.createdAt
-                )}
+                {formatDate(customer.createdAt)}
               </strong>
             </div>
 
@@ -910,21 +877,15 @@ const CustomerDetails = () => {
                 {customer._id || "—"}
               </strong>
             </div>
-
           </div>
         </section>
 
-        {/* ===================================================
-            SHIPPING ADDRESS
-        =================================================== */}
+        {/* SHIPPING ADDRESS */}
 
         <section className="customer-info-card">
-
           <div className="customer-section-header">
             <div>
-              <h3>
-                Shipping Address
-              </h3>
+              <h3>Shipping Address</h3>
 
               <p>
                 Latest order delivery address
@@ -936,7 +897,6 @@ const CustomerDetails = () => {
 
           {shippingAddress ? (
             <div className="customer-address-box">
-
               {getAddressLines(
                 shippingAddress
               ).map((line, index) => (
@@ -947,11 +907,9 @@ const CustomerDetails = () => {
                   {line}
                 </div>
               ))}
-
             </div>
           ) : (
             <div className="customer-no-address">
-
               <i className="bi bi-geo-alt"></i>
 
               <span>
@@ -962,11 +920,9 @@ const CustomerDetails = () => {
                 Address will appear when this
                 customer has an order.
               </small>
-
             </div>
           )}
         </section>
-
       </div>
 
       {/* =====================================================
@@ -975,7 +931,6 @@ const CustomerDetails = () => {
 
       {ordersError && (
         <section className="customer-orders-error">
-
           <div>
             <i className="bi bi-exclamation-triangle"></i>
 
@@ -984,9 +939,7 @@ const CustomerDetails = () => {
                 Unable to load customer orders
               </strong>
 
-              <p>
-                {ordersError}
-              </p>
+              <p>{ordersError}</p>
             </div>
           </div>
 
@@ -997,7 +950,6 @@ const CustomerDetails = () => {
             <i className="bi bi-arrow-clockwise"></i>
             Retry
           </button>
-
         </section>
       )}
 
@@ -1006,9 +958,7 @@ const CustomerDetails = () => {
       ===================================================== */}
 
       <section className="customer-account-status-card">
-
         <div className="customer-account-status-left">
-
           <div
             className={`customer-account-status-icon ${getStatusClass(
               customerStatus
@@ -1025,9 +975,7 @@ const CustomerDetails = () => {
           </div>
 
           <div>
-            <h3>
-              Account Status
-            </h3>
+            <h3>Account Status</h3>
 
             <p>
               This customer account is currently{" "}
@@ -1042,7 +990,6 @@ const CustomerDetails = () => {
               .
             </p>
           </div>
-
         </div>
 
         <span
@@ -1057,7 +1004,6 @@ const CustomerDetails = () => {
               .slice(1)
               .toLowerCase()}
         </span>
-
       </section>
 
       {/* =====================================================
@@ -1065,13 +1011,9 @@ const CustomerDetails = () => {
       ===================================================== */}
 
       <section className="customer-orders-card">
-
         <div className="customer-section-header orders-header">
-
           <div>
-            <h3>
-              Recent Orders
-            </h3>
+            <h3>Recent Orders</h3>
 
             <p>
               Orders placed by this customer
@@ -1089,56 +1031,41 @@ const CustomerDetails = () => {
                     : "Orders"
                 }`}
           </div>
-
         </div>
 
-        {/* ===================================================
-            LOADING
-        =================================================== */}
+        {/* LOADING */}
 
         {loadingOrders ? (
           <div className="customer-orders-loading">
-
             <div className="customer-loading-spinner"></div>
 
             <p>
               Loading customer orders...
             </p>
-
           </div>
         ) : orders.length === 0 ? (
 
-          /* =================================================
-             NO ORDERS
-          ================================================= */
+          /* NO ORDERS */
 
           <div className="customer-no-orders">
-
             <div className="customer-no-orders-icon">
               <i className="bi bi-bag-x"></i>
             </div>
 
-            <h4>
-              No Orders Yet
-            </h4>
+            <h4>No Orders Yet</h4>
 
             <p>
               This customer has not placed any
               orders.
             </p>
-
           </div>
 
         ) : (
 
-          /* =================================================
-             ORDERS TABLE
-          ================================================= */
+          /* ORDERS TABLE */
 
           <div className="customer-orders-table-wrapper">
-
             <table className="customer-orders-table">
-
               <thead>
                 <tr>
                   <th>Order</th>
@@ -1153,9 +1080,7 @@ const CustomerDetails = () => {
               </thead>
 
               <tbody>
-
                 {sortedOrders.map((order) => {
-
                   const firstItem =
                     Array.isArray(order.items) &&
                     order.items.length > 0
@@ -1174,9 +1099,7 @@ const CustomerDetails = () => {
                     0;
 
                   return (
-                    <tr
-                      key={order._id}
-                    >
+                    <tr key={order._id}>
 
                       {/* ORDER */}
 
@@ -1202,7 +1125,6 @@ const CustomerDetails = () => {
 
                       <td>
                         <div className="customer-order-product">
-
                           {productImage ? (
                             <img
                               src={productImage}
@@ -1220,7 +1142,6 @@ const CustomerDetails = () => {
                           )}
 
                           <div className="customer-order-product-info">
-
                             <strong>
                               {productName}
                             </strong>
@@ -1239,9 +1160,7 @@ const CustomerDetails = () => {
                                   : "items"}
                               </small>
                             )}
-
                           </div>
-
                         </div>
                       </td>
 
@@ -1316,17 +1235,13 @@ const CustomerDetails = () => {
                           {getOrderStatus(order)}
                         </span>
                       </td>
-
                     </tr>
                   );
                 })}
-
               </tbody>
-
             </table>
           </div>
         )}
-
       </section>
 
       {/* =====================================================
@@ -1335,13 +1250,9 @@ const CustomerDetails = () => {
 
       {latestOrder && (
         <section className="customer-latest-order-card">
-
           <div className="customer-section-header">
-
             <div>
-              <h3>
-                Latest Order Summary
-              </h3>
+              <h3>Latest Order Summary</h3>
 
               <p>
                 Information from the customer's
@@ -1350,7 +1261,6 @@ const CustomerDetails = () => {
             </div>
 
             <i className="bi bi-receipt"></i>
-
           </div>
 
           <div className="customer-latest-order-grid">
@@ -1386,9 +1296,7 @@ const CustomerDetails = () => {
               <span>Items</span>
 
               <strong>
-                {getItemsCount(
-                  latestOrder
-                )}
+                {getItemsCount(latestOrder)}
               </strong>
             </div>
 
@@ -1421,9 +1329,7 @@ const CustomerDetails = () => {
             {/* PAYMENT STATUS */}
 
             <div className="customer-latest-order-item">
-              <span>
-                Payment Status
-              </span>
+              <span>Payment Status</span>
 
               <strong
                 className={`latest-payment-status ${getStatusClass(
@@ -1439,9 +1345,7 @@ const CustomerDetails = () => {
             {/* ORDER STATUS */}
 
             <div className="customer-latest-order-item">
-              <span>
-                Order Status
-              </span>
+              <span>Order Status</span>
 
               <strong
                 className={`latest-order-status ${getStatusClass(
@@ -1457,9 +1361,7 @@ const CustomerDetails = () => {
             {/* RETURN STATUS */}
 
             <div className="customer-latest-order-item">
-              <span>
-                Return Status
-              </span>
+              <span>Return Status</span>
 
               <strong>
                 {latestOrder.returnStatus ||
@@ -1470,9 +1372,7 @@ const CustomerDetails = () => {
             {/* REFUND STATUS */}
 
             <div className="customer-latest-order-item">
-              <span>
-                Refund Status
-              </span>
+              <span>Refund Status</span>
 
               <strong>
                 {latestOrder.refundStatus ||
@@ -1483,9 +1383,7 @@ const CustomerDetails = () => {
             {/* REFUND AMOUNT */}
 
             <div className="customer-latest-order-item">
-              <span>
-                Refund Amount
-              </span>
+              <span>Refund Amount</span>
 
               <strong>
                 {formatCurrency(
@@ -1494,29 +1392,9 @@ const CustomerDetails = () => {
                 )}
               </strong>
             </div>
-
           </div>
         </section>
       )}
-
-      {/* =====================================================
-          BOTTOM BACK BUTTON
-      ===================================================== */}
-
-      <div className="customer-details-bottom-actions">
-
-        <button
-          type="button"
-          className="customer-details-bottom-back"
-          onClick={() =>
-            navigate("/admin/customers")
-          }
-        >
-          <i className="bi bi-arrow-left"></i>
-          Back to Customers
-        </button>
-
-      </div>
 
     </div>
   );
