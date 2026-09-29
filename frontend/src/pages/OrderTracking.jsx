@@ -18,7 +18,9 @@ const OrderTracking = () => {
   const [returnMessage, setReturnMessage] = useState("");
   const [returnError, setReturnError] = useState("");
 
-  // ================= FETCH LATEST ORDER =================
+  // =========================================================
+  // FETCH LATEST ORDER
+  // =========================================================
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -54,74 +56,139 @@ const OrderTracking = () => {
     fetchLatestOrder();
   }, [navigate]);
 
-  // ================= IMAGE URL =================
+  // =========================================================
+  // BACK TO ORDERS
+  // =========================================================
+
+  const handleBackToOrders = () => {
+    window.scrollTo(0, 0);
+    navigate("/orders");
+  };
+
+  // =========================================================
+  // IMAGE HELPERS
+  // =========================================================
 
   const getImageUrl = (image) => {
     if (!image) {
-      return "/images/product-placeholder.jpg";
+      return "";
     }
 
     if (typeof image !== "string") {
-      return "/images/product-placeholder.jpg";
+      return "";
     }
 
-    if (image.startsWith("http")) {
-      return image;
+    const cleanImage = image.trim();
+
+    if (!cleanImage) {
+      return "";
     }
 
-    if (image.startsWith("/")) {
-      return image;
+    // Full URL
+    if (
+      cleanImage.startsWith("http://") ||
+      cleanImage.startsWith("https://")
+    ) {
+      return cleanImage;
     }
 
-    return `http://localhost:5000/${image}`;
+    // Backend /uploads/... or /images/...
+    if (cleanImage.startsWith("/")) {
+      return `http://localhost:5000${cleanImage}`;
+    }
+
+    // uploads/... or images/...
+    return `http://localhost:5000/${cleanImage}`;
   };
-
-  // ================= PRODUCT IMAGE =================
 
   const getProductImage = (item) => {
     const product = item?.product;
 
-    const image =
-      item?.image ||
-      item?.productImage ||
-      item?.images?.[0] ||
-      product?.images?.[0] ||
-      product?.image ||
-      product?.productImage;
+    // Product image
+    if (product?.image) {
+      return product.image;
+    }
 
-    return getImageUrl(image);
+    // Product productImage
+    if (product?.productImage) {
+      return product.productImage;
+    }
+
+    // Product images array
+    if (
+      Array.isArray(product?.images) &&
+      product.images.length > 0
+    ) {
+      const firstImage = product.images[0];
+
+      if (typeof firstImage === "string") {
+        return firstImage;
+      }
+
+      if (firstImage?.url) {
+        return firstImage.url;
+      }
+
+      if (firstImage?.image) {
+        return firstImage.image;
+      }
+    }
+
+    // Order item image
+    if (item?.image) {
+      return item.image;
+    }
+
+    // Order item productImage
+    if (item?.productImage) {
+      return item.productImage;
+    }
+
+    // Order item images array
+    if (
+      Array.isArray(item?.images) &&
+      item.images.length > 0
+    ) {
+      const firstImage = item.images[0];
+
+      if (typeof firstImage === "string") {
+        return firstImage;
+      }
+
+      if (firstImage?.url) {
+        return firstImage.url;
+      }
+
+      if (firstImage?.image) {
+        return firstImage.image;
+      }
+    }
+
+    return "";
   };
 
-  // ================= PRODUCT NAME =================
-
   const getProductName = (item) => {
-    const product = item?.product;
-
     return (
-      product?.name ||
-      item?.productName ||
+      item?.product?.name ||
+      item?.product?.productName ||
       item?.name ||
+      item?.productName ||
       "Product"
     );
   };
 
-  // ================= PRODUCT PRICE =================
-
   const getProductPrice = (item) => {
-    const product = item?.product;
-
     return (
-      item?.price ??
-      item?.salePrice ??
-      item?.regularPrice ??
-      product?.salePrice ??
-      product?.regularPrice ??
-      product?.price ??
+      item?.price ||
+      item?.product?.price ||
+      item?.productPrice ||
       0
     );
   };
 
-  // ================= RETURN MODAL =================
+  // =========================================================
+  // RETURN MODAL
+  // =========================================================
 
   const openReturnModal = () => {
     setReturnReason("");
@@ -140,24 +207,30 @@ const OrderTracking = () => {
     setReturnError("");
   };
 
-  // ================= SUBMIT RETURN =================
-
   const handleReturnSubmit = async () => {
-    let finalReason = returnReason;
+    setReturnError("");
+    setReturnMessage("");
 
-    if (returnReason === "Other") {
-      finalReason = customReason.trim();
-    }
-
-    if (!finalReason) {
-      setReturnError("Please select or enter a return reason.");
+    if (!returnReason) {
+      setReturnError("Please select a return reason.");
       return;
     }
 
+    if (
+      returnReason === "Other" &&
+      !customReason.trim()
+    ) {
+      setReturnError("Please enter your reason.");
+      return;
+    }
+
+    const finalReason =
+      returnReason === "Other"
+        ? customReason.trim()
+        : returnReason;
+
     try {
       setReturnLoading(true);
-      setReturnError("");
-      setReturnMessage("");
 
       const token = localStorage.getItem("token");
 
@@ -178,29 +251,16 @@ const OrderTracking = () => {
         }
       );
 
-      const updatedOrder = response.data.order;
-
-      if (updatedOrder) {
-        setOrder(updatedOrder);
-      } else {
-        setOrder((previousOrder) => ({
-          ...previousOrder,
-          returnStatus: "REQUESTED",
-          returnReason: finalReason,
-        }));
+      if (response.data?.order) {
+        setOrder(response.data.order);
       }
 
-      setShowReturnModal(false);
-      setReturnReason("");
-      setCustomReason("");
-
       setReturnMessage(
-        "Your return request has been submitted successfully."
+        response.data?.message ||
+          "Return request submitted successfully."
       );
 
-      setTimeout(() => {
-        setReturnMessage("");
-      }, 2500);
+      setShowReturnModal(false);
     } catch (error) {
       console.error("Return request error:", error);
 
@@ -213,7 +273,9 @@ const OrderTracking = () => {
     }
   };
 
-  // ================= ORDER NOT FOUND =================
+  // =========================================================
+  // ORDER CHECK
+  // =========================================================
 
   if (!order) {
     return (
@@ -222,15 +284,12 @@ const OrderTracking = () => {
           <h2>Order Not Found</h2>
 
           <p>
-            Tracking information is not available.
+            We could not find the order you are looking for.
           </p>
 
           <button
-            onClick={() =>
-              navigate("/orders", {
-                replace: true,
-              })
-            }
+            type="button"
+            onClick={handleBackToOrders}
           >
             BACK TO ORDERS
           </button>
@@ -239,13 +298,13 @@ const OrderTracking = () => {
     );
   }
 
-  // ================= STATUS =================
+  // =========================================================
+  // ORDER STATUS
+  // =========================================================
 
   const status = (
     order.orderStatus || "PENDING"
   ).toUpperCase();
-
-  // ================= TRACKING STEPS =================
 
   const steps = [
     {
@@ -286,14 +345,15 @@ const OrderTracking = () => {
     },
   ];
 
-  // Backend status is used directly
   const normalizedStatus = status;
 
   const currentIndex = steps.findIndex(
     (step) => step.key === normalizedStatus
   );
 
-  // ================= RETURN STATUS =================
+  // =========================================================
+  // RETURN STATUS
+  // =========================================================
 
   const returnStatus = (
     order.returnStatus || "NONE"
@@ -312,25 +372,34 @@ const OrderTracking = () => {
   const isReturnRejected =
     returnStatus === "REJECTED";
 
+  // =========================================================
+  // PAGE
+  // =========================================================
+
   return (
     <div className="tracking-page">
-
       <div className="tracking-container">
 
-        {/* ================= HEADER ================= */}
+        {/* =====================================================
+            HEADER
+        ===================================================== */}
 
         <div className="tracking-header">
           <span>ORDER TRACKING</span>
 
           <h1>
-            #{order._id?.slice(-8).toUpperCase()}
+            #
+            {order._id
+              ?.slice(-8)
+              .toUpperCase()}
           </h1>
         </div>
 
-        {/* ================= ORDER INFO ================= */}
+        {/* =====================================================
+            ORDER INFORMATION
+        ===================================================== */}
 
         <div className="tracking-order-info">
-
           <div>
             <p>ORDER DATE</p>
 
@@ -339,7 +408,7 @@ const OrderTracking = () => {
                 ? new Date(
                     order.createdAt
                   ).toLocaleDateString()
-                : "—"}
+                : "-"}
             </h3>
           </div>
 
@@ -347,7 +416,7 @@ const OrderTracking = () => {
             <p>PAYMENT</p>
 
             <h3>
-              {order.paymentMethod || "—"}
+              {order.paymentMethod || "-"}
             </h3>
           </div>
 
@@ -357,202 +426,235 @@ const OrderTracking = () => {
             <h3>
               ₹
               {Number(
-                order.finalAmount ??
-                  order.totalAmount ??
-                  0
-              ).toLocaleString("en-IN")}
+                order.totalAmount || 0
+              ).toFixed(2)}
             </h3>
           </div>
-
         </div>
 
-        {/* ================= CANCELLED ================= */}
+        {/* =====================================================
+            CANCELLED ORDER
+        ===================================================== */}
 
-        {normalizedStatus === "CANCELLED" ? (
-
+        {status === "CANCELLED" ? (
           <div className="cancelled-box">
-
             <div className="cancelled-icon">
               ×
             </div>
 
-            <h2>
-              Order Cancelled
-            </h2>
+            <h2>Order Cancelled</h2>
 
             <p>
-              This order has been cancelled
-              and will not be delivered.
+              This order has been cancelled.
             </p>
-
           </div>
-
         ) : (
+          <>
+            {/* =================================================
+                TRACKING STEPS
+            ================================================= */}
 
-          /* ================= TRACKING STEPS ================= */
+            <div className="tracking-steps">
+              {steps.map((step, index) => {
+                const isCompleted =
+                  currentIndex >= 0 &&
+                  index <= currentIndex;
 
-          <div className="tracking-steps">
+                const isActive =
+                  index === currentIndex;
 
-            {steps.map((step, index) => {
+                return (
+                  <div
+                    key={step.key}
+                    className={`tracking-step ${
+                      isCompleted
+                        ? "completed"
+                        : ""
+                    } ${
+                      isActive
+                        ? "active"
+                        : ""
+                    }`}
+                  >
+                    <div className="step-left">
+                      <div className="step-circle">
+                        {isCompleted
+                          ? "✓"
+                          : ""}
+                      </div>
 
-              const completed =
-                currentIndex >= 0 &&
-                index <= currentIndex;
-
-              const active =
-                index === currentIndex;
-
-              return (
-                <div
-                  className={`tracking-step ${
-                    completed
-                      ? "completed"
-                      : ""
-                  } ${
-                    active
-                      ? "active"
-                      : ""
-                  }`}
-                  key={step.key}
-                >
-
-                  <div className="step-left">
-
-                    <div className="step-circle">
-                      {completed ? "✓" : ""}
+                      {index <
+                        steps.length - 1 && (
+                        <div
+                          className={`step-line ${
+                            currentIndex >
+                            index
+                              ? "filled"
+                              : ""
+                          }`}
+                        />
+                      )}
                     </div>
 
-                    {index !==
-                      steps.length - 1 && (
-                      <div
-                        className={`step-line ${
-                          index <
-                          currentIndex
-                            ? "filled"
-                            : ""
-                        }`}
-                      />
-                    )}
+                    <div className="step-content">
+                      <h3>
+                        {step.title}
+                      </h3>
 
+                      <p>
+                        {step.description}
+                      </p>
+
+                      {isActive && (
+                        <span className="current-status">
+                          CURRENT STATUS
+                        </span>
+                      )}
+                    </div>
                   </div>
+                );
+              })}
+            </div>
 
-                  <div className="step-content">
+            {/* =================================================
+                COURIER TRACKING
+            ================================================= */}
 
-                    <h3>
-                      {step.title}
-                    </h3>
+            <div className="courier-tracking-section">
+              <div className="courier-tracking-header">
+                <span>
+                  SHIPMENT TRACKING
+                </span>
 
+                <h2>
+                  Track Your Package
+                </h2>
+              </div>
+
+              <div className="courier-tracking-info">
+                <div className="courier-tracking-item">
+                  <p>COURIER</p>
+
+                  <h3>
+                    {order.courier ||
+                      "Not Assigned"}
+                  </h3>
+                </div>
+
+                <div className="courier-tracking-item">
+                  <p>
+                    TRACKING NUMBER
+                  </p>
+
+                  <h3>
+                    {order.trackingNumber ||
+                      "Not Available"}
+                  </h3>
+                </div>
+              </div>
+
+              {order.trackingUrl && (
+                <a
+                  href={order.trackingUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="track-package-btn"
+                >
+                  TRACK PACKAGE
+                </a>
+              )}
+            </div>
+
+            {/* =================================================
+                RETURN SECTION
+            ================================================= */}
+
+            {status === "DELIVERED" && (
+              <div className="return-section">
+                <h2>
+                  Return Your Order
+                </h2>
+
+                {canRequestReturn && (
+                  <>
                     <p>
-                      {step.description}
+                      If you are not satisfied
+                      with your purchase, you can
+                      request a return for this
+                      order.
                     </p>
 
-                    {active && (
-                      <span className="current-status">
-                        CURRENT STATUS
-                      </span>
-                    )}
+                    <button
+                      type="button"
+                      className="return-order-btn"
+                      onClick={
+                        openReturnModal
+                      }
+                    >
+                      REQUEST RETURN
+                    </button>
+                  </>
+                )}
 
-                  </div>
+                {isReturnRequested && (
+                  <>
+                    <p>
+                      Your return request has
+                      been submitted and is
+                      waiting for approval.
+                    </p>
 
-                </div>
-              );
-            })}
+                    <button
+                      type="button"
+                      className="return-order-btn disabled"
+                      disabled
+                    >
+                      RETURN REQUESTED
+                    </button>
+                  </>
+                )}
 
-          </div>
+                {isReturnApproved && (
+                  <>
+                    <p>
+                      Your return request has
+                      been approved.
+                    </p>
+
+                    <button
+                      type="button"
+                      className="return-order-btn disabled"
+                      disabled
+                    >
+                      RETURN APPROVED
+                    </button>
+                  </>
+                )}
+
+                {isReturnRejected && (
+                  <>
+                    <p>
+                      Your return request has
+                      been rejected.
+                    </p>
+
+                    <button
+                      type="button"
+                      className="return-order-btn disabled"
+                      disabled
+                    >
+                      RETURN REJECTED
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+          </>
         )}
 
-        {/* ================= RETURN SECTION ================= */}
-
-        {normalizedStatus === "DELIVERED" && (
-
-          <div className="return-section">
-
-            {canRequestReturn && (
-              <>
-                <h2>
-                  RETURN ORDER
-                </h2>
-
-                <p>
-                  If you are not satisfied with
-                  your order, you can request a return.
-                </p>
-
-                <button
-                  className="return-order-btn"
-                  onClick={openReturnModal}
-                >
-                  RETURN ORDER
-                </button>
-              </>
-            )}
-
-            {isReturnRequested && (
-              <>
-                <h2>
-                  RETURN REQUESTED
-                </h2>
-
-                <p>
-                  Your return request has been
-                  submitted and is waiting for
-                  admin approval.
-                </p>
-
-                <button
-                  className="return-order-btn disabled"
-                  disabled
-                >
-                  RETURN REQUESTED
-                </button>
-              </>
-            )}
-
-            {isReturnApproved && (
-              <>
-                <h2>
-                  RETURN APPROVED
-                </h2>
-
-                <p>
-                  Your return has been approved.
-                  Your refund will be processed
-                  according to the payment method.
-                </p>
-
-                <button
-                  className="return-order-btn disabled"
-                  disabled
-                >
-                  RETURN APPROVED
-                </button>
-              </>
-            )}
-
-            {isReturnRejected && (
-              <>
-                <h2>
-                  RETURN REJECTED
-                </h2>
-
-                <p>
-                  Your return request has been
-                  rejected by the admin.
-                </p>
-
-                <button
-                  className="return-order-btn disabled"
-                  disabled
-                >
-                  RETURN REJECTED
-                </button>
-              </>
-            )}
-
-          </div>
-        )}
-
-        {/* ================= SUCCESS MESSAGE ================= */}
+        {/* =====================================================
+            RETURN MESSAGE
+        ===================================================== */}
 
         {returnMessage && (
           <div className="tracking-return-message success">
@@ -560,140 +662,146 @@ const OrderTracking = () => {
           </div>
         )}
 
-        {/* ================= ERROR MESSAGE ================= */}
+        {returnError &&
+          !showReturnModal && (
+            <div className="tracking-return-message error">
+              {returnError}
+            </div>
+          )}
 
-        {returnError && !showReturnModal && (
-          <div className="tracking-return-message error">
-            {returnError}
-          </div>
-        )}
+        {/* =====================================================
+            ORDER PRODUCTS
+        ===================================================== */}
 
-        {/* ================= PRODUCTS ================= */}
+        <div className="tracking-products">
+          <h2>
+            Order Items
+          </h2>
 
-        {order.items?.length > 0 && (
+          {order.items?.map(
+            (item, index) => {
+              const image =
+                getProductImage(item);
 
-          <div className="tracking-products">
+              const productName =
+                getProductName(item);
 
-            <h2>
-              ORDER ITEMS
-            </h2>
+              const productPrice =
+                getProductPrice(item);
 
-            {order.items.map(
-              (item, index) => {
+              const imageUrl =
+                getImageUrl(image);
 
-                const productName =
-                  getProductName(item);
-
-                const productImage =
-                  getProductImage(item);
-
-                const productPrice =
-                  getProductPrice(item);
-
-                return (
-                  <div
-                    className="tracking-product"
-                    key={item._id || index}
-                  >
-
-                    {/* IMAGE */}
-
-                    <div className="tracking-product-image">
-
+              return (
+                <div
+                  className="tracking-product"
+                  key={
+                    item?._id ||
+                    item?.product?._id ||
+                    index
+                  }
+                >
+                  <div className="tracking-product-image">
+                    {imageUrl ? (
                       <img
-                        src={productImage}
+                        src={imageUrl}
                         alt={productName}
                         onError={(e) => {
-                          e.currentTarget.src =
-                            "/images/product-placeholder.jpg";
+                          console.error(
+                            "Product image failed:",
+                            imageUrl
+                          );
+
+                          e.currentTarget.style.display =
+                            "none";
+
+                          const parent =
+                            e.currentTarget
+                              .parentElement;
+
+                          if (parent) {
+                            parent.innerHTML =
+                              "<span>No Image</span>";
+                          }
                         }}
                       />
+                    ) : (
+                      <span>
+                        No Image
+                      </span>
+                    )}
+                  </div>
 
-                    </div>
+                  <div className="tracking-product-details">
+                    <h3>
+                      {productName}
+                    </h3>
 
-                    {/* DETAILS */}
+                    <p>
+                      Quantity:{" "}
+                      {item.quantity || 1}
+                    </p>
 
-                    <div className="tracking-product-details">
-
-                      <h3>
-                        {productName}
-                      </h3>
-
-                      <p>
-                        Quantity:{" "}
-                        {item.quantity || 1}
-                      </p>
-
-                      {item.size && (
-                        <p>
-                          Size: {item.size}
-                        </p>
-                      )}
-
-                    </div>
-
-                    {/* PRICE */}
-
-                    <div className="tracking-product-price">
-
-                      ₹
+                    <p>
+                      Price: ₹
                       {Number(
                         productPrice
-                      ).toLocaleString("en-IN")}
-
-                    </div>
-
+                      ).toFixed(2)}
+                    </p>
                   </div>
-                );
-              }
-            )}
 
-          </div>
-        )}
+                  <div className="tracking-product-price">
+                    ₹
+                    {(
+                      Number(
+                        productPrice
+                      ) *
+                      Number(
+                        item.quantity || 1
+                      )
+                    ).toFixed(2)}
+                  </div>
+                </div>
+              );
+            }
+          )}
+        </div>
 
-        {/* ================= BACK BUTTON ================= */}
+        {/* =====================================================
+            BACK BUTTON
+        ===================================================== */}
 
         <button
+          type="button"
           className="tracking-back-btn"
-          onClick={() =>
-            navigate("/orders", {
-              replace: true,
-            })
-          }
+          onClick={handleBackToOrders}
         >
           BACK TO ORDERS
         </button>
-
       </div>
 
-      {/* ================================================= */}
-      {/* RETURN MODAL */}
-      {/* ================================================= */}
+      {/* =======================================================
+          RETURN MODAL
+      ======================================================= */}
 
       {showReturnModal && (
-
-        <div
-          className="return-modal-overlay"
-          onClick={closeReturnModal}
-        >
-
-          <div
-            className="return-modal"
-            onClick={(e) =>
-              e.stopPropagation()
-            }
-          >
+        <div className="return-modal-overlay">
+          <div className="return-modal">
 
             <button
+              type="button"
               className="return-modal-close"
-              onClick={closeReturnModal}
+              onClick={
+                closeReturnModal
+              }
               disabled={returnLoading}
+              aria-label="Close"
             >
               ×
             </button>
 
             <h2>
-              RETURN ORDER
+              Request Return
             </h2>
 
             <p className="return-modal-description">
@@ -701,45 +809,40 @@ const OrderTracking = () => {
               returning this order.
             </p>
 
-            {/* REASON */}
-
-            <label>
-              Return Reason
+            <label htmlFor="returnReason">
+              RETURN REASON
             </label>
 
             <select
+              id="returnReason"
               value={returnReason}
               onChange={(e) => {
                 setReturnReason(
                   e.target.value
                 );
+
                 setReturnError("");
               }}
               disabled={returnLoading}
             >
-
               <option value="">
                 Select a reason
+              </option>
+
+              <option value="Product damaged">
+                Product damaged
               </option>
 
               <option value="Wrong product received">
                 Wrong product received
               </option>
 
-              <option value="Damaged product">
-                Damaged product
+              <option value="Product not as described">
+                Product not as described
               </option>
 
-              <option value="Product is defective">
-                Product is defective
-              </option>
-
-              <option value="Wrong size">
-                Wrong size
-              </option>
-
-              <option value="Product does not match description">
-                Product does not match description
+              <option value="Size or fit issue">
+                Size or fit issue
               </option>
 
               <option value="Changed my mind">
@@ -749,29 +852,22 @@ const OrderTracking = () => {
               <option value="Other">
                 Other
               </option>
-
             </select>
 
-            {/* CUSTOM REASON */}
-
             {returnReason === "Other" && (
-
               <textarea
                 value={customReason}
                 onChange={(e) => {
                   setCustomReason(
                     e.target.value
                   );
+
                   setReturnError("");
                 }}
-                placeholder="Enter your reason"
-                rows="4"
+                placeholder="Please describe your reason"
                 disabled={returnLoading}
               />
-
             )}
-
-            {/* ERROR */}
 
             {returnError && (
               <p className="return-modal-error">
@@ -779,36 +875,34 @@ const OrderTracking = () => {
               </p>
             )}
 
-            {/* ACTIONS */}
-
             <div className="return-modal-actions">
-
               <button
+                type="button"
                 className="return-cancel-btn"
-                onClick={closeReturnModal}
+                onClick={
+                  closeReturnModal
+                }
                 disabled={returnLoading}
               >
                 CANCEL
               </button>
 
               <button
+                type="button"
                 className="return-submit-btn"
-                onClick={handleReturnSubmit}
+                onClick={
+                  handleReturnSubmit
+                }
                 disabled={returnLoading}
               >
                 {returnLoading
                   ? "SUBMITTING..."
                   : "SUBMIT RETURN"}
               </button>
-
             </div>
-
           </div>
-
         </div>
-
       )}
-
     </div>
   );
 };

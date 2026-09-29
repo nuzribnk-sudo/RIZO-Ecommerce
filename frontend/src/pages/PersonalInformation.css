@@ -134,15 +134,19 @@ padding: 80px 20px 110px;
 .personal-buttons .cancel-btn,
 .personal-buttons .save-profile-btn {
   width: 98px !important;
-  height: 32px !important;
-
   min-width: 98px !important;
   max-width: 98px !important;
 
+  height: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+
   flex: 0 0 98px !important;
 
-  box-sizing: border-box;
+  margin: 0 !important;
   padding: 0 !important;
+
+  box-sizing: border-box !important;
 
   border: 1px solid #202020 !important;
   border-radius: 4px !important;
@@ -152,49 +156,22 @@ padding: 80px 20px 110px;
 
   color: #ffffff !important;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 
   font-family: Arial, sans-serif !important;
   font-size: 7px !important;
   font-weight: 600 !important;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.8px !important;
   line-height: 1 !important;
 
-  white-space: nowrap;
-  text-align: center;
+  white-space: nowrap !important;
+  text-align: center !important;
 
   cursor: pointer;
-
-  appearance: none;
-  -webkit-appearance: none;
-
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease,
-    transform 0.2s ease;
-}
-
-.personal-buttons .cancel-btn:hover,
-.personal-buttons .save-profile-btn:hover {
-  background: #000000 !important;
-  background-color: #000000 !important;
-  border-color: #000000 !important;
-  color: #ffffff !important;
-
-  transform: translateY(-1px);
-}
-
-.personal-buttons .cancel-btn:disabled,
-.personal-buttons .save-profile-btn:disabled {
-  background: #202020 !important;
-  background-color: #202020 !important;
-  color: #ffffff !important;
-
-  opacity: 0.55;
-  cursor: not-allowed;
-  transform: none;
+  appearance: none !important;
+  -webkit-appearance: none !important;
 }
 
 /* =========================================

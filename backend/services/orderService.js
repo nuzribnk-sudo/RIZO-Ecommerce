@@ -1,15 +1,22 @@
 const Order = require("../models/Order");
+
 const Cart = require("../models/Cart");
+
 const Product = require("../models/Product");
+
 const User = require("../models/User");
 
 const notificationService = require("./notificationService");
+
 const productService = require("./productService");
+
 const razorpayService = require("./razorpayService");
+
 const {
   sendOrderConfirmationEmail,
   sendNewOrderAdminEmail,
 } = require("./emailService");
+
 const { generateInvoicePdf } = require("./invoiceService");
 
 // ================= STOCK HELPERS ==========
@@ -40,10 +47,9 @@ const validateStockAvailability = async (items = []) => {
       );
     }
 
-    const product =
-      await Product.findById(productId).select(
-        "name stock"
-      );
+    const product = await Product.findById(productId).select(
+      "name stock"
+    );
 
     if (!product) {
       throw new Error(
@@ -106,9 +112,7 @@ const restoreStock = async (items = []) => {
   }
 };
 
-const reduceStockForItems = async (
-  items = []
-) => {
+const reduceStockForItems = async (items = []) => {
   const reducedItems = [];
 
   try {
@@ -152,16 +156,12 @@ const getBillingAddress = (
 ) => {
   /*
     Billing address logic:
-
     1. billingAddress is not sent
        -> use shipping address
-
     2. billingAddress === "same"
        -> use shipping address
-
     3. billingAddress === null
        -> use shipping address
-
     4. billingAddress is an object
        -> use the separate billing address
 
@@ -175,29 +175,14 @@ const getBillingAddress = (
     billingAddress === "same"
   ) {
     return {
-      fullName:
-        shippingAddress?.fullName || "",
-
-      phone:
-        shippingAddress?.phone || "",
-
-      address:
-        shippingAddress?.address || "",
-
-      apartment:
-        shippingAddress?.apartment || "",
-
-      city:
-        shippingAddress?.city || "",
-
-      state:
-        shippingAddress?.state || "",
-
-      pincode:
-        shippingAddress?.pincode || "",
-
-      country:
-        shippingAddress?.country || "India",
+      fullName: shippingAddress?.fullName || "",
+      phone: shippingAddress?.phone || "",
+      address: shippingAddress?.address || "",
+      apartment: shippingAddress?.apartment || "",
+      city: shippingAddress?.city || "",
+      state: shippingAddress?.state || "",
+      pincode: shippingAddress?.pincode || "",
+      country: shippingAddress?.country || "India",
     };
   }
 
@@ -206,56 +191,26 @@ const getBillingAddress = (
     !Array.isArray(billingAddress)
   ) {
     return {
-      fullName:
-        billingAddress.fullName || "",
-
-      phone:
-        billingAddress.phone || "",
-
-      address:
-        billingAddress.address || "",
-
-      apartment:
-        billingAddress.apartment || "",
-
-      city:
-        billingAddress.city || "",
-
-      state:
-        billingAddress.state || "",
-
-      pincode:
-        billingAddress.pincode || "",
-
-      country:
-        billingAddress.country || "India",
+      fullName: billingAddress.fullName || "",
+      phone: billingAddress.phone || "",
+      address: billingAddress.address || "",
+      apartment: billingAddress.apartment || "",
+      city: billingAddress.city || "",
+      state: billingAddress.state || "",
+      pincode: billingAddress.pincode || "",
+      country: billingAddress.country || "India",
     };
   }
 
   return {
-    fullName:
-      shippingAddress?.fullName || "",
-
-    phone:
-      shippingAddress?.phone || "",
-
-    address:
-      shippingAddress?.address || "",
-
-    apartment:
-      shippingAddress?.apartment || "",
-
-    city:
-      shippingAddress?.city || "",
-
-    state:
-      shippingAddress?.state || "",
-
-    pincode:
-      shippingAddress?.pincode || "",
-
-    country:
-      shippingAddress?.country || "India",
+    fullName: shippingAddress?.fullName || "",
+    phone: shippingAddress?.phone || "",
+    address: shippingAddress?.address || "",
+    apartment: shippingAddress?.apartment || "",
+    city: shippingAddress?.city || "",
+    state: shippingAddress?.state || "",
+    pincode: shippingAddress?.pincode || "",
+    country: shippingAddress?.country || "India",
   };
 };
 
@@ -266,8 +221,7 @@ const createOrder = async (orderData) => {
     "CREATE ORDER SERVICE HIT:",
     {
       user: orderData.user,
-      paymentMethod:
-        orderData.paymentMethod,
+      paymentMethod: orderData.paymentMethod,
     }
   );
 
@@ -287,9 +241,7 @@ const createOrder = async (orderData) => {
     0,
     totalAmount +
       shippingCharge -
-      (Number(
-        orderData.discountAmount
-      ) || 0)
+      (Number(orderData.discountAmount) || 0)
   );
 
   const paymentMethod = String(
@@ -321,9 +273,7 @@ const createOrder = async (orderData) => {
     billingAddress
   );
 
-  await validateStockAvailability(
-    items
-  );
+  await validateStockAvailability(items);
 
   let reducedItems = [];
 
@@ -344,29 +294,22 @@ const createOrder = async (orderData) => {
     });
   } catch (error) {
     if (reducedItems.length > 0) {
-      await restoreStock(
-        reducedItems
-      );
+      await restoreStock(reducedItems);
     }
 
     throw error;
   }
 
   if (paymentMethod === "COD") {
-    console.log(
-      "COD CART CLEAR: START"
-    );
+    console.log("COD CART CLEAR: START");
 
-    const cart =
-      await Cart.findOne({
-        user: order.user,
-      });
+    const cart = await Cart.findOne({
+      user: order.user,
+    });
 
     console.log(
       "COD CART BEFORE CLEAR:",
-      cart
-        ? cart.items.length
-        : "NO CART"
+      cart ? cart.items.length : "NO CART"
     );
 
     if (cart) {
@@ -380,37 +323,31 @@ const createOrder = async (orderData) => {
     }
   }
 
-  await notificationService.createNotification(
-    {
-      user: order.user,
-      title: "Order Created",
-      message:
-        "Your order has been created successfully.",
-      type: "ORDER",
-    }
-  );
+  await notificationService.createNotification({
+    user: order.user,
+    title: "Order Created",
+    message:
+      "Your order has been created successfully.",
+    type: "ORDER",
+  });
 
   const admin =
     await notificationService.getAdminUser();
 
   if (admin) {
-    await notificationService.createNotification(
-      {
-        user: admin._id,
-        title: "New Order",
-        message:
-          "A new order has been placed.",
-        type: "ORDER",
-      }
-    );
+    await notificationService.createNotification({
+      user: admin._id,
+      title: "New Order",
+      message:
+        "A new order has been placed.",
+      type: "ORDER",
+    });
   }
 
   if (admin) {
     try {
       const customer =
-        await User.findById(
-          order.user
-        );
+        await User.findById(order.user);
 
       await sendNewOrderAdminEmail({
         order,
@@ -420,9 +357,7 @@ const createOrder = async (orderData) => {
       console.log(
         "NEW ORDER ADMIN EMAIL SENT SUCCESSFULLY"
       );
-    } catch (
-      adminEmailError
-    ) {
+    } catch (adminEmailError) {
       console.error(
         "NEW ORDER ADMIN EMAIL FAILED:"
       );
@@ -436,9 +371,7 @@ const createOrder = async (orderData) => {
   if (paymentMethod === "COD") {
     try {
       const user =
-        await User.findById(
-          order.user
-        );
+        await User.findById(order.user);
 
       if (!user?.email) {
         console.log(
@@ -446,17 +379,13 @@ const createOrder = async (orderData) => {
         );
       } else {
         const invoiceBuffer =
-          await generateInvoicePdf(
-            order
-          );
+          await generateInvoicePdf(order);
 
-        await sendOrderConfirmationEmail(
-          {
-            order,
-            user,
-            invoiceBuffer,
-          }
-        );
+        await sendOrderConfirmationEmail({
+          order,
+          user,
+          invoiceBuffer,
+        });
 
         console.log(
           "COD ORDER EMAIL SENT SUCCESSFULLY"
@@ -478,9 +407,7 @@ const createOrder = async (orderData) => {
 
 // ================= GET USER ORDERS ==========
 
-const getOrdersByUser = async (
-  userId
-) => {
+const getOrdersByUser = async (userId) => {
   const orders =
     await Order.find({
       user: userId,
@@ -518,24 +445,20 @@ const getAllOrders = async ({
   const query = {};
 
   if (orderStatus) {
-    query.orderStatus =
-      orderStatus;
+    query.orderStatus = orderStatus;
   }
 
   if (paymentStatus) {
-    query.paymentStatus =
-      paymentStatus;
+    query.paymentStatus = paymentStatus;
   }
 
-  const searchText =
-    search.trim();
+  const searchText = search.trim();
 
   if (searchText) {
-    const regex =
-      new RegExp(
-        searchText,
-        "i"
-      );
+    const regex = new RegExp(
+      searchText,
+      "i"
+    );
 
     const users =
       await User.find({
@@ -569,14 +492,11 @@ const getAllOrders = async ({
       });
     }
 
-    query.$or =
-      searchConditions;
+    query.$or = searchConditions;
   }
 
   const totalOrders =
-    await Order.countDocuments(
-      query
-    );
+    await Order.countDocuments(query);
 
   const totalPages =
     Math.ceil(
@@ -600,28 +520,15 @@ const getAllOrders = async ({
 
       if (orderObject.user) {
         orderObject.user = {
-          _id:
-            orderObject.user._id,
-
-          name:
-            orderObject.user.name,
-
-          email:
-            orderObject.user.email,
-
-          phone:
-            orderObject.user.phone,
-
-          role:
-            orderObject.user.role,
-
-          status:
-            orderObject.user.status,
-
+          _id: orderObject.user._id,
+          name: orderObject.user.name,
+          email: orderObject.user.email,
+          phone: orderObject.user.phone,
+          role: orderObject.user.role,
+          status: orderObject.user.status,
           isEmailVerified:
             orderObject.user
               .isEmailVerified,
-
           profileCompleted:
             orderObject.user
               .profileCompleted,
@@ -641,13 +548,9 @@ const getAllOrders = async ({
 
 // ================= GET ORDER BY ID ==========
 
-const getOrderById = async (
-  orderId
-) => {
+const getOrderById = async (orderId) => {
   const order =
-    await Order.findById(
-      orderId
-    )
+    await Order.findById(orderId)
       .populate("items.product")
       .populate({
         path: "user",
@@ -668,9 +571,7 @@ const updateOrderStatus = async (
   trackingUrl
 ) => {
   const existingOrder =
-    await Order.findById(
-      orderId
-    );
+    await Order.findById(orderId);
 
   if (!existingOrder) {
     return null;
@@ -678,25 +579,19 @@ const updateOrderStatus = async (
 
   const paymentMethod =
     String(
-      existingOrder.paymentMethod ||
-        ""
+      existingOrder.paymentMethod || ""
     ).toUpperCase();
 
   const stockWasDeducted =
     paymentMethod === "COD" ||
-    (paymentMethod ===
-      "RAZORPAY" &&
-      existingOrder.paymentStatus ===
-        "PAID") ||
+    (paymentMethod === "RAZORPAY" &&
+      existingOrder.paymentStatus === "PAID") ||
     (!paymentMethod &&
-      existingOrder.orderStatus !==
-        "PENDING");
+      existingOrder.orderStatus !== "PENDING");
 
   if (
-    orderStatus ===
-      "CANCELLED" &&
-    existingOrder.orderStatus !==
-      "CANCELLED" &&
+    orderStatus === "CANCELLED" &&
+    existingOrder.orderStatus !== "CANCELLED" &&
     stockWasDeducted
   ) {
     await restoreStock(
@@ -710,36 +605,20 @@ const updateOrderStatus = async (
 
   // ================= TRACKING UPDATE =================
 
-  if (
-    orderStatus === "SHIPPED"
-  ) {
-    if (
-      trackingNumber !==
-      undefined
-    ) {
+  if (orderStatus === "SHIPPED") {
+    if (trackingNumber !== undefined) {
       updateData.trackingNumber =
-        String(
-          trackingNumber
-        ).trim();
+        String(trackingNumber).trim();
     }
 
-    if (
-      trackingUrl !==
-      undefined
-    ) {
+    if (trackingUrl !== undefined) {
       updateData.trackingUrl =
-        String(
-          trackingUrl
-        ).trim();
+        String(trackingUrl).trim();
     }
 
-    if (
-      courier !== undefined
-    ) {
+    if (courier !== undefined) {
       updateData.courier =
-        String(
-          courier
-        ).trim();
+        String(courier).trim();
     }
   }
 
@@ -754,15 +633,13 @@ const updateOrderStatus = async (
     );
 
   if (order) {
-    await notificationService.createNotification(
-      {
-        user: order.user,
-        title:
-          "Order Status Updated",
-        message: `Your order status is now ${orderStatus}.`,
-        type: "ORDER",
-      }
-    );
+    await notificationService.createNotification({
+      user: order.user,
+      title: "Order Status Updated",
+      message:
+        `Your order status is now ${orderStatus}.`,
+      type: "ORDER",
+    });
   }
 
   return order;
@@ -777,9 +654,7 @@ const updateOrderTracking = async (
   trackingUrl
 ) => {
   const existingOrder =
-    await Order.findById(
-      orderId
-    );
+    await Order.findById(orderId);
 
   if (!existingOrder) {
     throw new Error(
@@ -797,8 +672,7 @@ const updateOrderTracking = async (
   }
 
   if (
-    trackingNumber ===
-      undefined &&
+    trackingNumber === undefined &&
     trackingUrl === undefined &&
     courier === undefined
   ) {
@@ -809,32 +683,19 @@ const updateOrderTracking = async (
 
   const updateData = {};
 
-  if (
-    trackingNumber !==
-    undefined
-  ) {
+  if (trackingNumber !== undefined) {
     updateData.trackingNumber =
-      String(
-        trackingNumber
-      ).trim();
+      String(trackingNumber).trim();
   }
 
-  if (
-    trackingUrl !== undefined
-  ) {
+  if (trackingUrl !== undefined) {
     updateData.trackingUrl =
-      String(
-        trackingUrl
-      ).trim();
+      String(trackingUrl).trim();
   }
 
-  if (
-    courier !== undefined
-  ) {
+  if (courier !== undefined) {
     updateData.courier =
-      String(
-        courier
-      ).trim();
+      String(courier).trim();
   }
 
   const order =
@@ -866,15 +727,11 @@ const cancelOrderByUser = async (
   userRole
 ) => {
   const isAdmin =
-    String(
-      userRole || ""
-    ).toLowerCase() ===
+    String(userRole || "").toLowerCase() ===
     "admin";
 
   const order = isAdmin
-    ? await Order.findById(
-        orderId
-      )
+    ? await Order.findById(orderId)
     : await Order.findOne({
         _id: orderId,
         user: userId,
@@ -891,9 +748,7 @@ const cancelOrderByUser = async (
       "SHIPPED",
       "DELIVERED",
       "CANCELLED",
-    ].includes(
-      order.orderStatus
-    )
+    ].includes(order.orderStatus)
   ) {
     throw new Error(
       "Order cannot be cancelled at this stage"
@@ -916,47 +771,34 @@ const cancelOrderByUser = async (
 
   const stockWasDeducted =
     paymentMethod === "COD" ||
-    (paymentMethod ===
-      "RAZORPAY" &&
-      order.paymentStatus ===
-        "PAID");
+    (paymentMethod === "RAZORPAY" &&
+      order.paymentStatus === "PAID");
 
   if (stockWasDeducted) {
-    await restoreStock(
-      order.items
-    );
+    await restoreStock(order.items);
   }
 
-  order.orderStatus =
-    "CANCELLED";
+  order.orderStatus = "CANCELLED";
 
   if (
-    paymentMethod ===
-      "RAZORPAY" &&
-    order.paymentStatus ===
-      "PAID"
+    paymentMethod === "RAZORPAY" &&
+    order.paymentStatus === "PAID"
   ) {
-    order.refundStatus =
-      "PENDING";
+    order.refundStatus = "PENDING";
 
     order.refundAmount =
-      Number(
-        order.finalAmount
-      ) || 0;
+      Number(order.finalAmount) || 0;
   }
 
   await order.save();
 
-  await notificationService.createNotification(
-    {
-      user: order.user,
-      title:
-        "Order Cancelled",
-      message:
-        "Your order has been cancelled successfully.",
-      type: "ORDER",
-    }
-  );
+  await notificationService.createNotification({
+    user: order.user,
+    title: "Order Cancelled",
+    message:
+      "Your order has been cancelled successfully.",
+    type: "ORDER",
+  });
 
   return order;
 };
@@ -969,9 +811,7 @@ const requestReturn = async (
   reason
 ) => {
   const order =
-    await Order.findById(
-      orderId
-    );
+    await Order.findById(orderId);
 
   if (!order) {
     throw new Error(
@@ -1015,14 +855,9 @@ const requestReturn = async (
     );
   }
 
-  order.returnStatus =
-    "REQUESTED";
-
-  order.returnReason =
-    reason.trim();
-
-  order.returnRequestedAt =
-    new Date();
+  order.returnStatus = "REQUESTED";
+  order.returnReason = reason.trim();
+  order.returnRequestedAt = new Date();
 
   await order.save();
 
@@ -1031,444 +866,446 @@ const requestReturn = async (
 
 // ================= ADMIN APPROVE / REJECT RETURN ==========
 
-const updateReturnStatus =
-  async (
-    orderId,
-    returnStatus
-  ) => {
-    const order =
-      await Order.findById(
-        orderId
-      );
+const updateReturnStatus = async (
+  orderId,
+  returnStatus
+) => {
+  const order =
+    await Order.findById(orderId);
 
-    if (!order) {
-      return null;
-    }
+  if (!order) {
+    return null;
+  }
 
-    if (
-      order.returnStatus !==
-      "REQUESTED"
-    ) {
-      throw new Error(
-        "There is no pending return request for this order"
-      );
-    }
+  if (
+    order.returnStatus !==
+    "REQUESTED"
+  ) {
+    throw new Error(
+      "There is no pending return request for this order"
+    );
+  }
 
-    if (
-      ![
-        "APPROVED",
-        "REJECTED",
-      ].includes(returnStatus)
-    ) {
-      throw new Error(
-        "Invalid return status"
-      );
-    }
+  if (
+    ![
+      "APPROVED",
+      "REJECTED",
+    ].includes(returnStatus)
+  ) {
+    throw new Error(
+      "Invalid return status"
+    );
+  }
 
-    if (
-      returnStatus ===
-      "REJECTED"
-    ) {
-      order.returnStatus =
-        "REJECTED";
+  if (
+    returnStatus ===
+    "REJECTED"
+  ) {
+    order.returnStatus = "REJECTED";
+    order.refundStatus = "NOT_APPLICABLE";
+    order.refundAmount = 0;
+    order.refundId = "";
+    order.refundedAt = null;
 
-      order.refundStatus =
-        "NOT_APPLICABLE";
+    await order.save();
 
-      order.refundAmount = 0;
+    return order;
+  }
 
-      order.refundId = "";
+  if (
+    order.paymentMethod !==
+    "RAZORPAY"
+  ) {
+    order.returnStatus = "APPROVED";
+    order.refundStatus = "NOT_APPLICABLE";
+    order.refundAmount = 0;
 
-      order.refundedAt = null;
+    await order.save();
 
-      await order.save();
+    return order;
+  }
 
-      return order;
-    }
+  if (
+    order.paymentStatus !==
+    "PAID"
+  ) {
+    throw new Error(
+      "Razorpay refund is possible only for a paid order"
+    );
+  }
 
-    if (
-      order.paymentMethod !==
-      "RAZORPAY"
-    ) {
-      order.returnStatus =
-        "APPROVED";
+  if (!order.razorpayPaymentId) {
+    throw new Error(
+      "Razorpay payment ID not found for this order"
+    );
+  }
 
-      order.refundStatus =
-        "NOT_APPLICABLE";
+  if (order.refundId) {
+    throw new Error(
+      "Refund has already been created for this order"
+    );
+  }
 
-      order.refundAmount = 0;
+  const refundAmount =
+    Number(order.finalAmount);
 
-      await order.save();
+  if (
+    !Number.isFinite(refundAmount) ||
+    refundAmount <= 0
+  ) {
+    throw new Error(
+      "Invalid refund amount"
+    );
+  }
 
-      return order;
-    }
-
-    if (
-      order.paymentStatus !==
-      "PAID"
-    ) {
-      throw new Error(
-        "Razorpay refund is possible only for a paid order"
-      );
-    }
-
-    if (
-      !order.razorpayPaymentId
-    ) {
-      throw new Error(
-        "Razorpay payment ID not found for this order"
-      );
-    }
-
-    if (order.refundId) {
-      throw new Error(
-        "Refund has already been created for this order"
-      );
-    }
-
-    const refundAmount =
-      Number(
-        order.finalAmount
-      );
-
-    if (
-      !Number.isFinite(
+  try {
+    const refund =
+      await razorpayService.createRefund(
+        order.razorpayPaymentId,
         refundAmount
-      ) ||
-      refundAmount <= 0
-    ) {
-      throw new Error(
-        "Invalid refund amount"
       );
-    }
 
-    try {
-      const refund =
-        await razorpayService.createRefund(
-          order.razorpayPaymentId,
-          refundAmount
+    order.returnStatus = "APPROVED";
+    order.refundAmount = refundAmount;
+    order.refundId = refund.id || "";
+
+    order.refundStatus =
+      refund.status === "processed"
+        ? "COMPLETED"
+        : "PROCESSING";
+
+    if (refund.created_at) {
+      order.refundedAt =
+        new Date(
+          refund.created_at * 1000
         );
-
-      order.returnStatus =
-        "APPROVED";
-
-      order.refundAmount =
-        refundAmount;
-
-      order.refundId =
-        refund.id || "";
-
-      order.refundStatus =
-        refund.status ===
-        "processed"
-          ? "COMPLETED"
-          : "PROCESSING";
-
-      if (refund.created_at) {
-        order.refundedAt =
-          new Date(
-            refund.created_at *
-              1000
-          );
-      } else {
-        order.refundedAt =
-          new Date();
-      }
-
-      await order.save();
-
-      return order;
-    } catch (error) {
-      console.error(
-        "Razorpay refund failed:",
-        error.message
-      );
-
-      order.returnStatus =
-        "REQUESTED";
-
-      order.refundStatus =
-        "PENDING";
-
-      await order.save();
-
-      throw new Error(
-        `Razorpay refund failed: ${error.message}`
-      );
+    } else {
+      order.refundedAt = new Date();
     }
-  };
+
+    await order.save();
+
+    return order;
+  } catch (error) {
+    console.error(
+      "Razorpay refund failed:",
+      error.message
+    );
+
+    order.returnStatus = "REQUESTED";
+    order.refundStatus = "PENDING";
+
+    await order.save();
+
+    throw new Error(
+      `Razorpay refund failed: ${error.message}`
+    );
+  }
+};
 
 // ================= BEST SELLING PRODUCTS ==========
 
-const getBestSellingProducts =
-  async () => {
-    const bestSellers =
-      await Order.aggregate([
-        {
-          $match: {
-            paymentStatus:
-              "PAID",
-
-            orderStatus: {
-              $nin: [
-                "CANCELLED",
-              ],
-            },
+const getBestSellingProducts = async () => {
+  const bestSellers =
+    await Order.aggregate([
+      {
+        $match: {
+          paymentStatus: "PAID",
+          orderStatus: {
+            $nin: ["CANCELLED"],
           },
         },
-
-        {
-          $unwind: "$items",
-        },
-
-        {
-          $group: {
-            _id: "$items.product",
-
-            totalSold: {
-              $sum:
-                "$items.quantity",
-            },
+      },
+      {
+        $unwind: "$items",
+      },
+      {
+        $group: {
+          _id: "$items.product",
+          totalSold: {
+            $sum: "$items.quantity",
           },
         },
-
-        {
-          $sort: {
-            totalSold: -1,
-          },
+      },
+      {
+        $sort: {
+          totalSold: -1,
         },
-
-        {
-          $limit: 10,
+      },
+      {
+        $limit: 10,
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "_id",
+          foreignField: "_id",
+          as: "product",
         },
-
-        {
-          $lookup: {
-            from: "products",
-
-            localField:
-              "_id",
-
-            foreignField:
-              "_id",
-
-            as: "product",
-          },
+      },
+      {
+        $unwind: "$product",
+      },
+      {
+        $project: {
+          _id: 0,
+          product: 1,
+          totalSold: 1,
         },
+      },
+    ]);
 
-        {
-          $unwind:
-            "$product",
-        },
-
-        {
-          $project: {
-            _id: 0,
-            product: 1,
-            totalSold: 1,
-          },
-        },
-      ]);
-
-    return bestSellers;
-  };
+  return bestSellers;
+};
 
 // ================= UPDATE RAZORPAY ORDER ==========
 
-const updateRazorpayOrder =
-  async (
-    orderId,
-    razorpayOrderId,
-    userId
-  ) => {
+const updateRazorpayOrder = async (
+  orderId,
+  razorpayOrderId,
+  userId
+) => {
+  const order =
+    await Order.findOneAndUpdate(
+      {
+        _id: orderId,
+        user: userId,
+      },
+      {
+        razorpayOrderId,
+      },
+      {
+        new: true,
+      }
+    );
+
+  return order;
+};
+
+// ================= VERIFY RAZORPAY PAYMENT ==========
+
+const verifyRazorpayPayment = async (
+  orderId,
+  userId,
+  razorpayPaymentId,
+  razorpaySignature
+) => {
+  const existingOrder =
+    await Order.findOne({
+      _id: orderId,
+      user: userId,
+    });
+
+  if (!existingOrder) {
+    return null;
+  }
+
+  if (
+    existingOrder.paymentStatus ===
+    "PAID"
+  ) {
+    return existingOrder;
+  }
+
+  const paymentMethod =
+    String(
+      existingOrder.paymentMethod || ""
+    ).toUpperCase();
+
+  if (
+    paymentMethod === "COD"
+  ) {
+    throw new Error(
+      "Razorpay payment verification is allowed only for Razorpay orders"
+    );
+  }
+
+  const reducedItems =
+    await reduceStockForItems(
+      existingOrder.items || []
+    );
+
+  try {
     const order =
       await Order.findOneAndUpdate(
         {
           _id: orderId,
           user: userId,
+          paymentStatus: {
+            $ne: "PAID",
+          },
         },
         {
-          razorpayOrderId,
+          paymentStatus: "PAID",
+          orderStatus: "CONFIRMED",
+          razorpayPaymentId,
+          razorpaySignature,
         },
         {
           new: true,
+          runValidators: true,
         }
       );
 
-    return order;
-  };
+    if (!order) {
+      await restoreStock(reducedItems);
 
-// ================= VERIFY RAZORPAY PAYMENT ==========
-
-const verifyRazorpayPayment =
-  async (
-    orderId,
-    userId,
-    razorpayPaymentId,
-    razorpaySignature
-  ) => {
-    const existingOrder =
-      await Order.findOne({
+      return await Order.findOne({
         _id: orderId,
         user: userId,
       });
-
-    if (!existingOrder) {
-      return null;
     }
 
-    if (
-      existingOrder.paymentStatus ===
-      "PAID"
-    ) {
-      return existingOrder;
+    const cart =
+      await Cart.findOne({
+        user: userId,
+      });
+
+    if (cart) {
+      cart.items = [];
+      await cart.save();
     }
-
-    const paymentMethod =
-      String(
-        existingOrder.paymentMethod ||
-          ""
-      ).toUpperCase();
-
-    if (
-      paymentMethod === "COD"
-    ) {
-      throw new Error(
-        "Razorpay payment verification is allowed only for Razorpay orders"
-      );
-    }
-
-    const reducedItems =
-      await reduceStockForItems(
-        existingOrder.items || []
-      );
 
     try {
-      const order =
-        await Order.findOneAndUpdate(
-          {
-            _id: orderId,
+      const user =
+        await User.findById(order.user);
 
-            user: userId,
-
-            paymentStatus: {
-              $ne: "PAID",
-            },
-          },
-          {
-            paymentStatus: "PAID",
-
-            orderStatus:
-              "CONFIRMED",
-
-            razorpayPaymentId,
-
-            razorpaySignature,
-          },
-          {
-            new: true,
-
-            runValidators: true,
-          }
+      if (!user?.email) {
+        console.log(
+          "RAZORPAY EMAIL SKIPPED: Customer email not found"
         );
+      } else {
+        const invoiceBuffer =
+          await generateInvoicePdf(order);
 
-      if (!order) {
-        await restoreStock(
-          reducedItems
-        );
-
-        return await Order.findOne({
-          _id: orderId,
-          user: userId,
-        });
-      }
-
-      const cart =
-        await Cart.findOne({
-          user: userId,
+        await sendOrderConfirmationEmail({
+          order,
+          user,
+          invoiceBuffer,
         });
 
-      if (cart) {
-        cart.items = [];
-
-        await cart.save();
-      }
-
-      try {
-        const user =
-          await User.findById(
-            order.user
-          );
-
-        if (!user?.email) {
-          console.log(
-            "RAZORPAY EMAIL SKIPPED: Customer email not found"
-          );
-        } else {
-          const invoiceBuffer =
-            await generateInvoicePdf(
-              order
-            );
-
-          await sendOrderConfirmationEmail(
-            {
-              order,
-              user,
-              invoiceBuffer,
-            }
-          );
-
-          console.log(
-            "RAZORPAY ORDER EMAIL SENT SUCCESSFULLY"
-          );
-        }
-      } catch (emailError) {
-        console.error(
-          "RAZORPAY ORDER EMAIL FAILED:"
-        );
-
-        console.error(
-          emailError.message
+        console.log(
+          "RAZORPAY ORDER EMAIL SENT SUCCESSFULLY"
         );
       }
-
-      return order;
-    } catch (error) {
-      await restoreStock(
-        reducedItems
+    } catch (emailError) {
+      console.error(
+        "RAZORPAY ORDER EMAIL FAILED:"
       );
 
-      throw error;
+      console.error(
+        emailError.message
+      );
     }
-  };
+
+    return order;
+  } catch (error) {
+    await restoreStock(reducedItems);
+
+    throw error;
+  }
+};
 
 // ================= CHECK RAZORPAY REFUND STATUS =================
 
 const checkRefundStatus = async (orderId) => {
-  const order = await Order.findById(orderId);
+  const order =
+    await Order.findById(orderId);
 
   if (!order) {
-    throw new Error("Order not found");
+    throw new Error(
+      "Order not found"
+    );
   }
 
   if (!order.refundId) {
-    throw new Error("Refund ID not found for this order");
+    throw new Error(
+      "Refund ID not found for this order"
+    );
   }
 
-  const refund = await razorpayService.getRefund(order.refundId);
+  const refund =
+    await razorpayService.getRefund(
+      order.refundId
+    );
 
-  console.log("Razorpay refund status:", refund.status);
+  console.log(
+    "Razorpay refund status:",
+    refund.status
+  );
 
-  if (refund.status === "processed") {
+  if (
+    refund.status === "processed"
+  ) {
     order.refundStatus = "COMPLETED";
-  } else if (refund.status === "failed") {
+  } else if (
+    refund.status === "failed"
+  ) {
     order.refundStatus = "FAILED";
   } else {
     order.refundStatus = "PROCESSING";
   }
 
   if (refund.created_at) {
-    order.refundedAt = new Date(refund.created_at * 1000);
+    order.refundedAt =
+      new Date(
+        refund.created_at * 1000
+      );
+  }
+
+  await order.save();
+
+  return order;
+};
+
+// ================= UPDATE PAYMENT STATUS ==========
+
+const updateOrderPaymentStatus = async (
+  orderId,
+  paymentStatus
+) => {
+  const allowedStatuses = [
+    "PENDING",
+    "PAID",
+    "FAILED",
+  ];
+
+  if (
+    !allowedStatuses.includes(
+      paymentStatus
+    )
+  ) {
+    throw new Error(
+      "Invalid payment status. Allowed values: PENDING, PAID, FAILED"
+    );
+  }
+
+  const order =
+    await Order.findById(orderId);
+
+  if (!order) {
+    throw new Error(
+      "Order not found"
+    );
+  }
+
+  // Manual payment status update is only for COD
+  if (
+    order.paymentMethod !==
+    "COD"
+  ) {
+    throw new Error(
+      "Payment status can be manually updated only for COD orders"
+    );
+  }
+
+  order.paymentStatus =
+    paymentStatus;
+
+  if (
+    paymentStatus === "PAID"
+  ) {
+    order.paidAt = new Date();
   }
 
   await order.save();
@@ -1491,13 +1328,6 @@ module.exports = {
   getBestSellingProducts,
   updateRazorpayOrder,
   verifyRazorpayPayment,
-   checkRefundStatus,
+  checkRefundStatus,
+  updateOrderPaymentStatus,
 };
-
-
-
-
-
-
-
-
