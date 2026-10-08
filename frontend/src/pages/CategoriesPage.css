@@ -2,25 +2,19 @@
    CATEGORIES PAGE
 ========================================= */
 
-.categories-page {
+.customer-categories-page {
   width: 100%;
   min-height: 100vh;
   padding: 35px 20px 140px;
   box-sizing: border-box;
 
-  background-color: #dcdcd9 !important;
-
-  background-image: linear-gradient(
+  background: linear-gradient(
     110deg,
     #a8a8a6 0%,
     #c2c2c0 38%,
     #e1e1df 68%,
     #f7f7f5 100%
   ) !important;
-
-  background-repeat: no-repeat !important;
-  background-position: center !important;
-  background-size: 100% 100% !important;
 
   color: #111111;
 }
@@ -189,7 +183,7 @@
 ========================================= */
 
 @media (max-width: 900px) {
-  .categories-page {
+  .customer-categories-page {
     padding: 25px 18px 120px;
   }
 
@@ -228,7 +222,7 @@
 ========================================= */
 
 @media (max-width: 650px) {
-  .categories-page {
+  .customer-categories-page {
     padding: 15px 14px 100px;
   }
 
@@ -283,7 +277,7 @@
 ========================================= */
 
 @media (max-width: 400px) {
-  .categories-page {
+  .customer-categories-page {
     padding: 10px 10px 80px;
   }
 

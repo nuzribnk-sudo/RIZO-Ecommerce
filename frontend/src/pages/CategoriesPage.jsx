@@ -51,7 +51,7 @@ function CategoriesPage() {
     <>
       <Navbar />
 
-      <main className="categories-page">
+      <main className="customer-categories-page">
         <section className="categories-heading">
           <h1>Shop by Category</h1>
 

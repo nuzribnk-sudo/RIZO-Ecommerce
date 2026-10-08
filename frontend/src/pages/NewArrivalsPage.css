@@ -89,7 +89,6 @@
   letter-spacing: 0.3px;
 
   cursor: pointer;
-
   transition: 0.25s ease;
 }
 
@@ -405,30 +404,39 @@
 ========================================= */
 
 .new-arrivals-page-grid .product-info {
-  padding: 13px 3px 0;
+  display: block !important;
+  width: 100% !important;
+  padding: 13px 3px 0 !important;
+  box-sizing: border-box;
+  text-align: left !important;
 }
 
 .new-arrivals-page-grid .product-info h3 {
-  margin: 0;
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
 
   color: #111111;
-
   font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
   font-weight: 500;
   line-height: 1.4;
+
+  text-align: left !important;
 }
 
 .new-arrivals-page-grid .product-info p {
-  margin: 6px 0 0;
+  display: block !important;
+  width: 100% !important;
+  margin: 6px 0 0 !important;
 
   color: #333333;
-
   font-family: Arial, Helvetica, sans-serif;
   font-size: 13px;
   font-weight: 500;
-}
 
+  text-align: left !important;
+}
 
 /* =========================================
    MESSAGE

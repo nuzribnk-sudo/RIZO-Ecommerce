@@ -212,9 +212,6 @@ body:has(.orders-page) {
 
 /* =========================================
    PRODUCT INFORMATION
-
-   TEXT IS ALWAYS
-   TO THE RIGHT OF IMAGE
 ========================================= */
 
 .order-product-info {
@@ -342,10 +339,7 @@ body:has(.orders-page) {
 
   box-sizing: border-box;
 
-  border-left:
-    1px solid rgba(0, 0, 0, 0.08);
-
-    transform: translateY(8px);
+  transform: translateY(8px);
 }
 
 /* =========================================
@@ -379,7 +373,9 @@ body:has(.orders-page) {
   text-align: center;
 }
 
-/* STATUS COLORS */
+/* =========================================
+   STATUS COLORS
+========================================= */
 
 .order-status.pending {
   color: #856600;
@@ -630,7 +626,6 @@ body:has(.orders-page) {
   background: #3a3a3a;
 }
 
-
 /* =========================================
    TABLET / MOBILE
 ========================================= */
@@ -720,7 +715,6 @@ body:has(.orders-page) {
   }
 }
 
-
 /* =========================================
    SMALL MOBILE
 ========================================= */
@@ -809,16 +803,27 @@ body:has(.orders-page) {
 .order-return-button {
   width: 135px;
   height: 35px;
+
   display: block;
+
   border: 1px solid #999;
+
   border-radius: 6px;
+
   background: rgba(255, 255, 255, 0.42);
+
   color: #555;
+
   font-family: Arial, Helvetica, sans-serif;
+
   font-size: 8px;
+
   font-weight: 500;
+
   letter-spacing: 1px;
+
   cursor: pointer;
+
   transition:
     background 0.2s ease,
     color 0.2s ease,
@@ -827,7 +832,9 @@ body:has(.orders-page) {
 
 .order-return-button:hover {
   background: #202020;
+
   border-color: #202020;
+
   color: #ffffff;
 }
 
@@ -837,16 +844,27 @@ body:has(.orders-page) {
 
 .order-refund-message {
   width: 135px;
+
   box-sizing: border-box;
+
   padding: 8px 5px;
+
   border-radius: 6px;
+
   background: rgba(255, 255, 255, 0.42);
+
   border: 1px solid rgba(0, 0, 0, 0.12);
+
   color: #555;
+
   font-family: Arial, Helvetica, sans-serif;
+
   font-size: 8px;
+
   font-weight: 500;
+
   letter-spacing: 0.5px;
+
   text-align: center;
 }
 
@@ -855,57 +873,79 @@ body:has(.orders-page) {
 ========================================= */
 
 @media (max-width: 450px) {
+
   .order-return-button {
     width: 125px;
+
     height: 33px;
   }
 
   .order-refund-message {
     width: 125px;
   }
-} 
+}
 
-/* CANCEL ORDER TOAST */
+/* =========================================
+   CANCEL ORDER TOAST
+========================================= */
 
 .cancel-toast {
   background: #ffffff;
+
   color: #111111;
+
   padding: 18px 20px;
+
   border-radius: 8px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.18);
+
   min-width: 320px;
 }
 
 .cancel-toast p {
   margin: 0 0 16px;
+
   font-size: 14px;
+
   font-weight: 500;
 }
 
 .cancel-toast-buttons {
   display: flex;
+
   justify-content: flex-end;
+
   gap: 10px;
 }
 
 .cancel-toast-no,
 .cancel-toast-yes {
   padding: 8px 18px;
+
   border-radius: 5px;
+
   font-size: 12px;
+
   font-weight: 600;
+
   cursor: pointer;
 }
 
 .cancel-toast-no {
   background: #ffffff;
+
   color: #111111;
+
   border: 1px solid #cccccc;
 }
 
 .cancel-toast-yes {
   background: #111111;
+
   color: #ffffff;
+
   border: 1px solid #111111;
 }
 
@@ -915,4 +955,15 @@ body:has(.orders-page) {
 
 .cancel-toast-yes:hover {
   background: #333333;
+} 
+
+.orders-header {
+  border: none !important;
+  border-bottom: none !important;
+}
+
+.orders-header::before,
+.orders-header::after {
+  display: none !important;
+  content: none !important;
 }
