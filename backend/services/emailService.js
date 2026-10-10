@@ -1,13 +1,21 @@
+
 require("dotenv").config();
 
 const nodemailer = require("nodemailer");
 
+// ================= EMAIL TRANSPORT =================
+
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+  connectionTimeout: 20000,
+  greetingTimeout: 20000,
+  socketTimeout: 30000,
 });
 
 // ================= TEST EMAIL CONNECTION =================
@@ -32,7 +40,6 @@ const sendOtpEmail = async (email, otp) => {
     console.log("Sending registration OTP");
     console.log("From:", process.env.EMAIL_USER);
     console.log("To:", email);
-    console.log("OTP:", otp);
     console.log("=================================");
 
     const info = await transporter.sendMail({
@@ -62,7 +69,6 @@ const sendResetOtpEmail = async (email, otp) => {
     console.log("Sending password reset OTP");
     console.log("From:", process.env.EMAIL_USER);
     console.log("To:", email);
-    console.log("OTP:", otp);
     console.log("=================================");
 
     const info = await transporter.sendMail({
@@ -101,13 +107,9 @@ const sendContactEmail = async ({
 
     const info = await transporter.sendMail({
       from: process.env.EMAIL_USER,
-
       to: process.env.EMAIL_USER,
-
       replyTo: email,
-
       subject: "New Contact Form Message - E-Commerce",
-
       text: `
 New Contact Form Message
 
@@ -206,7 +208,6 @@ Thank you for choosing Rizo Fashion!
   }
 };
 
-
 // ================= SEND NEW ORDER ADMIN EMAIL =================
 
 const sendNewOrderAdminEmail = async ({
@@ -221,6 +222,7 @@ const sendNewOrderAdminEmail = async ({
     }
 
     const orderId = order._id?.toString() || "N/A";
+
     const customerName =
       customer?.name ||
       order.shippingAddress?.fullName ||
@@ -270,4 +272,3 @@ module.exports = {
   sendOrderConfirmationEmail,
   sendNewOrderAdminEmail,
 };
-
