@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
@@ -19,6 +19,11 @@ function ChangePassword() {
   const [error, setError] = useState("");
 
   const [loading, setLoading] = useState(false);
+
+  // Scroll to top when page opens
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -105,7 +110,6 @@ function ChangePassword() {
       <Navbar />
 
       <main className="change-password-page">
-
         <div className="change-password-container">
 
           <h1>CHANGE PASSWORD</h1>
@@ -130,7 +134,6 @@ function ChangePassword() {
             className="change-password-form"
             onSubmit={handleSubmit}
           >
-
             <div className="password-field">
               <label>CURRENT PASSWORD</label>
 
@@ -185,7 +188,6 @@ function ChangePassword() {
                 ? "UPDATING PASSWORD..."
                 : "UPDATE PASSWORD"}
             </button>
-
           </form>
 
           {/* BACK BUTTON */}
@@ -194,11 +196,10 @@ function ChangePassword() {
             className="password-back-btn"
             onClick={() => navigate("/profile")}
           >
-             BACK
+            BACK
           </button>
 
         </div>
-
       </main>
 
       <Footer />

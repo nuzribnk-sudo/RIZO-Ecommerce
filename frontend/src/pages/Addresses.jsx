@@ -500,7 +500,7 @@ function Addresses() {
             className="back-btn"
             onClick={() => navigate(-1)}
           >
-            ← BACK
+             BACK
           </button>
         )}
 

@@ -89,23 +89,22 @@ function ProductCard({ product, loading = false }) {
       try {
         const response = await axios.get(
           `${API_URL}/wishlist`,
-          getAuthConfig()
+          getAuthConfig(),
         );
 
         console.log("WISHLIST RESPONSE:", response.data);
 
-        const products =
-          response.data.wishlist?.products || [];
+        const products = response.data.wishlist?.products || [];
 
-        const ids = products.map(
-          (item) => String(item?._id || item?.id || item)
+        const ids = products.map((item) =>
+          String(item?._id || item?.id || item),
         );
 
         setWishlistIds(ids);
       } catch (error) {
         console.error(
           "FETCH WISHLIST ERROR:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
 
         setWishlistIds([]);
@@ -117,10 +116,7 @@ function ProductCard({ product, loading = false }) {
 
   // ================= PRODUCT IMAGE =================
 
-  let productImage =
-    product?.images?.[0] ||
-    product?.image ||
-    "";
+  let productImage = product?.images?.[0] || product?.image || "";
 
   if (
     productImage &&
@@ -133,8 +129,7 @@ function ProductCard({ product, loading = false }) {
   }
 
   if (!productImage) {
-    productImage =
-      "https://via.placeholder.com/500x600?text=No+Image";
+    productImage = "https://via.placeholder.com/500x600?text=No+Image";
   }
 
   // ================= PRODUCT PRICE =================
@@ -144,15 +139,11 @@ function ProductCard({ product, loading = false }) {
     product?.salePrice !== undefined &&
     product?.salePrice !== ""
       ? product.salePrice
-      : product?.regularPrice ??
-        product?.price ??
-        0;
+      : (product?.regularPrice ?? product?.price ?? 0);
 
   // ================= WISHLIST CHECK =================
 
-  const isWishlisted = wishlistIds.includes(
-    String(productId)
-  );
+  const isWishlisted = wishlistIds.includes(String(productId));
 
   // ================= WISHLIST =================
 
@@ -166,17 +157,12 @@ function ProductCard({ product, loading = false }) {
 
     const token = getToken();
 
-    console.log(
-      "TOKEN:",
-      token ? "EXISTS" : "NOT FOUND"
-    );
+    console.log("TOKEN:", token ? "EXISTS" : "NOT FOUND");
 
     // ================= LOGIN CHECK =================
 
     if (!token) {
-      toast.error(
-        "Please login to add products to your wishlist."
-      );
+      toast.error("Please login to add products to your wishlist.");
 
       navigate("/login");
       return;
@@ -188,82 +174,48 @@ function ProductCard({ product, loading = false }) {
       // ================= REMOVE =================
 
       if (isWishlisted) {
-        console.log(
-          "REMOVING FROM WISHLIST:",
-          productId
-        );
+        console.log("REMOVING FROM WISHLIST:", productId);
 
         const response = await axios.delete(
           `${API_URL}/wishlist/remove/${productId}`,
-          getAuthConfig()
+          getAuthConfig(),
         );
 
-        console.log(
-          "REMOVE RESPONSE:",
-          response.data
-        );
+        console.log("REMOVE RESPONSE:", response.data);
 
-        setWishlistIds((prev) =>
-          prev.filter(
-            (id) => id !== String(productId)
-          )
-        );
+        setWishlistIds((prev) => prev.filter((id) => id !== String(productId)));
 
-        toast.success(
-          "Product removed from wishlist!"
-        );
+        toast.success("Product removed from wishlist!");
 
         // Navbar wishlist count update
-        window.dispatchEvent(
-          new Event("wishlistUpdated")
-        );
+        window.dispatchEvent(new Event("wishlistUpdated"));
       }
 
       // ================= ADD =================
-
       else {
-        console.log(
-          "ADDING TO WISHLIST:",
-          productId
-        );
+        console.log("ADDING TO WISHLIST:", productId);
 
         const response = await axios.post(
           `${API_URL}/wishlist/add`,
           {
             productId: productId,
           },
-          getAuthConfig()
+          getAuthConfig(),
         );
 
-        console.log(
-          "ADD RESPONSE:",
-          response.data
-        );
+        console.log("ADD RESPONSE:", response.data);
 
-        setWishlistIds((prev) => [
-          ...prev,
-          String(productId),
-        ]);
+        setWishlistIds((prev) => [...prev, String(productId)]);
 
-        toast.success(
-          "Product added to wishlist!"
-        );
+        toast.success("Product added to wishlist!");
 
         // Navbar wishlist count update
-        window.dispatchEvent(
-          new Event("wishlistUpdated")
-        );
+        window.dispatchEvent(new Event("wishlistUpdated"));
       }
     } catch (error) {
-      console.error(
-        "WISHLIST ERROR:",
-        error.response?.data || error.message
-      );
+      console.error("WISHLIST ERROR:", error.response?.data || error.message);
 
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to update wishlist"
-      );
+      toast.error(error.response?.data?.message || "Failed to update wishlist");
     } finally {
       setUpdatingWishlist(false);
     }
@@ -272,39 +224,28 @@ function ProductCard({ product, loading = false }) {
   // ================= IMAGE ERROR =================
 
   const handleImageError = (e) => {
-    e.currentTarget.src =
-      "https://via.placeholder.com/500x600?text=No+Image";
+    e.currentTarget.src = "https://via.placeholder.com/500x600?text=No+Image";
   };
 
   // ================= UI =================
 
   return (
     <div className="product-card">
-
       {/* WISHLIST BUTTON */}
 
       <button
         type="button"
-        className={`wishlist-btn ${
-          isWishlisted ? "active-wishlist" : ""
-        }`}
+        className={`wishlist-btn ${isWishlisted ? "active-wishlist" : ""}`}
         onClick={handleWishlist}
         disabled={updatingWishlist}
-        aria-label={
-          isWishlisted
-            ? "Remove from wishlist"
-            : "Add to wishlist"
-        }
+        aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
       >
         {isWishlisted ? "♥" : "♡"}
       </button>
 
       {/* PRODUCT LINK */}
 
-      <Link
-        to={`/product/${productId}`}
-        className="product-link"
-      >
+      <Link to={`/product/${productId}`} className="product-link">
         <div className="product-image-wrapper">
           <img
             src={productImage}
@@ -315,16 +256,10 @@ function ProductCard({ product, loading = false }) {
         </div>
 
         <div className="product-info">
-          <h3>
-            {product?.name || "Product Name"}
-          </h3>
+          <h3>{product?.name || "Product Name"}</h3>
 
           <p className="product-price">
-            ₹{" "}
-            {Number(productPrice).toLocaleString(
-              "en-IN"
-            )}
-            /-
+            ₹{Number(productPrice).toLocaleString("en-IN")}
           </p>
         </div>
       </Link>

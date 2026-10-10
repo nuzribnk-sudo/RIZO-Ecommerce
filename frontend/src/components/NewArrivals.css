@@ -435,3 +435,31 @@
     margin-top: 35px;
   }
 }
+
+/* =========================================
+   NEW ARRIVALS - PRICE RIGHT SIDE
+========================================= */
+
+.products-grid .product-card .product-info {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  box-sizing: border-box;
+  padding: 13px 3px 0 !important;
+  text-align: left;
+}
+
+.products-grid .product-card .product-info h3 {
+  margin: 0 !important;
+  text-align: left !important;
+  width: auto !important;
+}
+
+.products-grid .product-card .product-info .product-price {
+  margin: 0 !important;
+  margin-left: auto !important;
+  text-align: right !important;
+  width: auto !important;
+  flex-shrink: 0;
+}

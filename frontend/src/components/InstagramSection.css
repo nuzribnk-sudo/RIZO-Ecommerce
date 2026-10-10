@@ -4,15 +4,10 @@
 
 .instagram-section {
   width: 100%;
-
   background: #ffffff;
-
   padding: 80px 0 0;
-
   margin: 0;
-
   overflow: hidden;
-
   box-sizing: border-box;
 }
 
@@ -22,36 +17,25 @@
 
 .instagram-heading {
   text-align: center;
-
   margin: 0 0 70px;
-
   padding: 0 20px;
-
   box-sizing: border-box;
 }
 
 .instagram-heading h2 {
   margin: 0 0 12px;
-
   font-family: Georgia, "Times New Roman", serif;
-
   font-size: 38px;
   font-weight: 400;
-
   line-height: 1.2;
-
   color: #111111;
 }
 
 .instagram-heading p {
   margin: 0;
-
   font-family: Arial, Helvetica, sans-serif;
-
   font-size: 13px;
-
   line-height: 1.55;
-
   color: #888888;
 }
 
@@ -61,13 +45,9 @@
 
 .instagram-slider {
   width: 100%;
-
   height: 330px;
-
   position: relative;
-
   overflow: hidden;
-
   margin: 0;
   padding: 0;
 }
@@ -75,9 +55,7 @@
 .instagram-track {
   width: 100%;
   height: 100%;
-
   position: relative;
-
   margin: 0;
   padding: 0;
 }
@@ -88,30 +66,22 @@
 
 .instagram-image {
   position: absolute;
-
   top: 50%;
-
   width: 14.285%;
   height: 250px;
-
   transform: translateY(-50%);
-
   overflow: hidden;
-
   transition:
     left 0.8s ease-in-out,
     width 0.8s ease-in-out,
     height 0.8s ease-in-out;
-
   z-index: 2;
 }
 
 .instagram-image img {
   width: 100%;
   height: 100%;
-
   display: block;
-
   object-fit: cover;
 }
 
@@ -121,7 +91,6 @@
 
 .image-0 {
   left: 0%;
-
   height: 250px;
 }
 
@@ -131,9 +100,7 @@
 
 .image-1 {
   left: 14.285%;
-
   height: 300px;
-
   z-index: 5;
 }
 
@@ -143,7 +110,6 @@
 
 .image-2 {
   left: 28.57%;
-
   height: 250px;
 }
 
@@ -153,9 +119,7 @@
 
 .image-3 {
   left: 42.855%;
-
   height: 300px;
-
   z-index: 5;
 }
 
@@ -165,7 +129,6 @@
 
 .image-4 {
   left: 57.14%;
-
   height: 250px;
 }
 
@@ -175,9 +138,7 @@
 
 .image-5 {
   left: 71.425%;
-
   height: 300px;
-
   z-index: 5;
 }
 
@@ -187,7 +148,6 @@
 
 .image-6 {
   left: 85.71%;
-
   height: 250px;
 }
 
@@ -199,7 +159,6 @@
   .instagram-section {
     padding-top: 60px;
     padding-bottom: 0;
-
     margin: 0;
   }
 
@@ -217,7 +176,6 @@
 
   .instagram-slider {
     height: 260px;
-
     margin: 0;
     padding: 0;
   }
@@ -245,13 +203,11 @@
   .instagram-section {
     padding-top: 50px;
     padding-bottom: 0;
-
     margin: 0;
   }
 
   .instagram-heading {
     margin-bottom: 40px;
-
     padding: 0 25px;
   }
 
@@ -261,13 +217,11 @@
 
   .instagram-heading p {
     font-size: 11px;
-
     line-height: 1.6;
   }
 
   .instagram-slider {
     height: 190px;
-
     margin: 0;
     padding: 0;
   }
@@ -298,40 +252,30 @@
 @media (max-width: 600px) {
   .instagram-section {
     width: 100%;
-
     padding-top: 45px;
-    padding-bottom: 0;
-
-    margin: 0;
-
+    padding-bottom: 0 !important;
+    margin: 0 !important;
     overflow: hidden;
+    box-sizing: border-box;
   }
 
   .instagram-heading {
     width: 100%;
-
     margin: 0 0 35px;
-
     padding: 0 18px;
-
     box-sizing: border-box;
   }
 
   .instagram-heading h2 {
     font-size: 27px;
-
     line-height: 1.2;
-
     margin-bottom: 10px;
   }
 
   .instagram-heading p {
     font-size: 10px;
-
     line-height: 1.65;
-
     max-width: 360px;
-
     margin: 0 auto;
   }
 
@@ -341,27 +285,24 @@
 
   .instagram-slider {
     width: 100%;
-
     height: 145px;
-
-    margin: 0;
-    padding: 0;
-
+    margin: 0 !important;
+    padding: 0 !important;
     overflow: hidden;
+    box-sizing: border-box;
   }
 
   .instagram-track {
     width: 100%;
     height: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   .instagram-image {
     width: 14.285%;
-
     top: 50%;
-
     transform: translateY(-50%);
-
     overflow: hidden;
   }
 
@@ -382,7 +323,6 @@
   .instagram-image img {
     width: 100%;
     height: 100%;
-
     object-fit: cover;
   }
 }
@@ -394,53 +334,49 @@
 @media (max-width: 400px) {
   .instagram-section {
     width: 100%;
-
     padding-top: 40px;
-    padding-bottom: 0;
-
-    margin: 0;
-
+    padding-bottom: 0 !important;
+    margin: 0 !important;
     overflow: hidden;
+    box-sizing: border-box;
   }
 
   .instagram-heading {
     width: 100%;
-
     margin: 0 0 30px;
-
     padding: 0 15px;
   }
 
   .instagram-heading h2 {
     font-size: 23px;
-
     line-height: 1.2;
-
     margin-bottom: 9px;
   }
 
   .instagram-heading p {
     font-size: 8.5px;
-
     line-height: 1.6;
   }
 
   .instagram-slider {
     width: 100%;
-
     height: 130px;
-
-    margin: 0;
-    padding: 0;
-
+    margin: 0 !important;
+    padding: 0 !important;
     overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  .instagram-track {
+    width: 100%;
+    height: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   .instagram-image {
     width: 14.285%;
-
     top: 50%;
-
     transform: translateY(-50%);
   }
 
@@ -461,7 +397,6 @@
   .instagram-image img {
     width: 100%;
     height: 100%;
-
     object-fit: cover;
   }
 }

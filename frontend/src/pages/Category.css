@@ -869,3 +869,63 @@
     font-size: 10px;
   }
 }
+
+
+
+/* =========================================
+   FIX CATEGORY PRODUCT NAME + PRICE
+========================================= */
+
+.category-page .category-page-grid .category-product-card .category-product-info {
+  display: block !important;
+  width: 100% !important;
+  padding: 13px 3px 0 !important;
+  margin: 0 !important;
+
+  text-align: left !important;
+
+  box-sizing: border-box !important;
+  position: static !important;
+  float: none !important;
+}
+
+.category-page .category-page-grid .category-product-card .category-product-info h3 {
+  display: block !important;
+  width: 100% !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  text-align: left !important;
+
+  position: static !important;
+  float: none !important;
+
+  color: #111111;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.category-page .category-page-grid .category-product-card .category-product-info .product-price {
+  display: block !important;
+  width: 100% !important;
+
+  margin: 6px 0 0 !important;
+  padding: 0 !important;
+
+  text-align: left !important;
+
+  position: static !important;
+  float: none !important;
+
+  justify-self: start !important;
+  align-self: flex-start !important;
+
+  color: #333333;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+}

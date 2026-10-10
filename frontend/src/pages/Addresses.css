@@ -1,9 +1,8 @@
-
 /* =========================================
    ADDRESSES PAGE
 ========================================= */
 
-.addresses-page {
+.addresses-page { 
   width: 100%;
   min-height: calc(100vh - 210px);
   padding: 70px 20px 180px;
@@ -114,6 +113,7 @@
 
 /* =========================================
    BACK BUTTON
+   NO ANIMATION / NO SHAKE
 ========================================= */
 
 .back-btn {
@@ -144,14 +144,8 @@
   line-height: 24px;
 
   cursor: pointer;
-
-  transition: background 0.2s ease;
 }
 
-.back-btn:hover {
-  background: #000000;
-  border-color: #000000;
-}
 /* =========================================
    ADDRESS FORM
 ========================================= */
@@ -847,5 +841,47 @@
   .no-address p {
     font-size: 8px;
   }
+} 
+
+/* =========================================
+   BACK BUTTON - COMPLETELY STATIC
+========================================= */
+
+.addresses-page .back-btn,
+.addresses-page .back-btn:hover,
+.addresses-page .back-btn:focus,
+.addresses-page .back-btn:active,
+.addresses-page .back-btn:focus-visible {
+  position: relative !important;
+
+  left: 50% !important;
+  top: auto !important;
+
+  transform: translateX(-50%) !important;
+
+  animation: none !important;
+  transition: none !important;
+
+  translate: none !important;
+  rotate: none !important;
+  scale: 1 !important;
+
+  background: #202020 !important;
+  border-color: #202020 !important;
+
+  box-shadow: none !important;
+
+  outline: none !important;
 }
 
+.addresses-page .back-btn:hover,
+.addresses-page .back-btn:focus,
+.addresses-page .back-btn:active {
+  transform: translateX(-50%) !important;
+
+  animation: none !important;
+  transition: none !important;
+
+  top: auto !important;
+  left: 50% !important;
+}

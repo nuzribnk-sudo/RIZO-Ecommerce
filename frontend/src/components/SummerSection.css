@@ -6,15 +6,11 @@
   position: relative;
   width: 100%;
   height: 360px;
-
   display: grid;
   grid-template-columns: 55% 45%;
-
   background: #ffffff;
-
   margin: 0;
   padding: 0;
-
   overflow: visible;
   box-sizing: border-box;
 }
@@ -26,7 +22,6 @@
 .summer-image {
   width: 100%;
   height: 100%;
-
   overflow: hidden;
   position: relative;
 }
@@ -34,12 +29,9 @@
 .summer-image img {
   width: 100%;
   height: 100%;
-
   display: block;
-
   object-fit: cover;
   object-position: center;
-
   animation: summerFade 0.7s ease-in-out;
 }
 
@@ -61,39 +53,28 @@
 
 .summer-content {
   background: #dedede;
-
   display: flex;
   flex-direction: column;
-
   justify-content: center;
   align-items: center;
-
   text-align: left;
-
   padding: 40px;
-
   box-sizing: border-box;
 }
 
 .summer-content h2 {
   width: 70%;
-
   margin: 0 0 12px;
-
   font-family: Georgia, "Times New Roman", serif;
   font-size: 25px;
   font-weight: 500;
-
   color: #333;
 }
 
 .summer-description {
   width: 70%;
-
   margin: 0;
-
   color: #777;
-
   font-family: Arial, sans-serif;
   font-size: 8px;
   line-height: 1.7;
@@ -102,19 +83,13 @@
 .summer-button {
   width: 118px;
   height: 38px;
-
   margin-top: 22px;
-
   border: none;
   border-radius: 4px;
-
   background: #050505;
   color: #ffffff;
-
   font-size: 8px;
-
   cursor: pointer;
-
   transition: 0.3s ease;
 }
 
@@ -128,19 +103,13 @@
 
 .summer-controls {
   position: absolute;
-
   bottom: -55px;
   left: 50%;
-
   transform: translateX(-50%);
-
   display: flex;
   flex-direction: column;
-
   align-items: center;
-
   gap: 12px;
-
   z-index: 10;
 }
 
@@ -150,30 +119,23 @@
 
 .summer-dots {
   display: flex;
-
   align-items: center;
   justify-content: center;
-
   gap: 8px;
 }
 
 .summer-dots span {
   width: 6px;
   height: 6px;
-
   border-radius: 50%;
-
   background: #c9c9c9;
-
   cursor: pointer;
-
   transition: 0.3s ease;
 }
 
 .summer-dots span.active {
   width: 7px;
   height: 7px;
-
   background: #222;
 }
 
@@ -189,22 +151,15 @@
 .summer-arrows button {
   width: 30px;
   height: 30px;
-
   border: 1px solid #eeeeee;
   border-radius: 50%;
-
   background: #ffffff;
-
   color: #555;
-
   cursor: pointer;
-
   font-size: 18px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   transition: 0.3s ease;
 }
 
@@ -219,9 +174,7 @@
 @media (max-width: 1000px) {
   .summer-section {
     grid-template-columns: 55% 45%;
-
     height: 340px;
-
     margin-top: 0;
     margin-bottom: 50px;
   }
@@ -256,92 +209,64 @@
 @media (max-width: 768px) {
   .summer-section {
     width: 100%;
-
     height: auto;
-
     display: flex;
     flex-direction: column;
-
     margin-top: 0;
     margin-bottom: 0;
-
-    /*
-      Extra space is reserved for
-      dots + arrows so they don't
-      overlap New Arrivals.
-    */
     padding-bottom: 95px;
-
     overflow: visible;
   }
 
   .summer-image {
     width: 100%;
     height: 300px;
-
     flex-shrink: 0;
   }
 
   .summer-image img {
     width: 100%;
     height: 100%;
-
     object-fit: cover;
     object-position: center;
   }
 
   .summer-content {
     width: 100%;
-
     min-height: 255px;
-
     padding: 40px 20px;
-
     align-items: center;
     justify-content: center;
-
     text-align: left;
-
     box-sizing: border-box;
   }
 
   .summer-content h2 {
     width: 92%;
-
     font-size: 22px;
-
     margin-bottom: 14px;
   }
 
   .summer-description {
     width: 92%;
-
     font-size: 8px;
-
     line-height: 1.7;
   }
 
   .summer-button {
     width: 115px;
     height: 34px;
-
     margin-top: 20px;
-
     font-size: 8px;
   }
 
-  /* =========================
-     MOBILE CONTROLS
-  ========================= */
+  /* MOBILE CONTROLS */
 
   .summer-controls {
     bottom: 20px;
     left: 50%;
-
     transform: translateX(-50%);
-
     gap: 12px;
-
     width: 100%;
   }
 
@@ -366,7 +291,6 @@
   .summer-arrows button {
     width: 28px;
     height: 28px;
-
     font-size: 17px;
   }
 }
@@ -378,14 +302,10 @@
 @media (max-width: 600px) {
   .summer-section {
     width: 100%;
-
     height: auto;
-
     margin-top: 0;
     margin-bottom: 0;
-
     padding-bottom: 90px;
-
     overflow: visible;
   }
 
@@ -396,46 +316,34 @@
 
   .summer-content {
     width: 100%;
-
     min-height: 245px;
-
     padding: 35px 20px;
-
     box-sizing: border-box;
   }
 
   .summer-content h2 {
     width: 92%;
-
     font-size: 21px;
-
     margin-bottom: 13px;
   }
 
   .summer-description {
     width: 92%;
-
     font-size: 8px;
-
     line-height: 1.7;
   }
 
   .summer-button {
     width: 112px;
     height: 33px;
-
     margin-top: 19px;
-
     font-size: 8px;
   }
 
-  /* =========================
-     CONTROLS
-  ========================= */
+  /* CONTROLS */
 
   .summer-controls {
     bottom: 18px;
-
     gap: 10px;
   }
 
@@ -460,7 +368,6 @@
   .summer-arrows button {
     width: 28px;
     height: 28px;
-
     font-size: 17px;
   }
 }
@@ -472,19 +379,10 @@
 @media (max-width: 400px) {
   .summer-section {
     width: 100%;
-
     height: auto;
-
     margin-top: 0;
     margin-bottom: 0;
-
-    /*
-      Space reserved for controls.
-      This prevents arrows from touching
-      the New Arrivals heading.
-    */
     padding-bottom: 88px;
-
     overflow: visible;
   }
 
@@ -495,46 +393,34 @@
 
   .summer-content {
     width: 100%;
-
     min-height: 225px;
-
     padding: 32px 15px;
-
     box-sizing: border-box;
   }
 
   .summer-content h2 {
     width: 95%;
-
     font-size: 20px;
-
     margin-bottom: 12px;
   }
 
   .summer-description {
     width: 95%;
-
     font-size: 7.5px;
-
     line-height: 1.7;
   }
 
   .summer-button {
     width: 108px;
     height: 32px;
-
     margin-top: 18px;
-
     font-size: 7.5px;
   }
 
-  /* =========================
-     VERY SMALL CONTROLS
-  ========================= */
+  /* VERY SMALL CONTROLS */
 
   .summer-controls {
     bottom: 16px;
-
     gap: 9px;
   }
 
@@ -559,7 +445,6 @@
   .summer-arrows button {
     width: 27px;
     height: 27px;
-
     font-size: 16px;
   }
 }
