@@ -4,13 +4,13 @@ import { toast } from "react-toastify";
 import "./AddCoupon.css";
 
 const COUPON_API_URL =
-  "http://localhost:5000/api/coupons";
+  "https://rizo-ecommerce-backend.onrender.com/api/coupons";
 
 const CATEGORY_API_URL =
-  "http://localhost:5000/api/categories";
+  "https://rizo-ecommerce-backend.onrender.com/api/categories";
 
 const PRODUCT_API_URL =
-  "http://localhost:5000/api/products";
+  "https://rizo-ecommerce-backend.onrender.com/api/products";
 
 function EditCoupon() {
   const navigate = useNavigate();

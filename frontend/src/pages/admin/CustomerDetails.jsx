@@ -7,7 +7,7 @@ import React, {
 import { useLocation, useNavigate } from "react-router-dom";
 import "./CustomerDetails.css";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://rizo-ecommerce-backend.onrender.com/api";
 
 // =========================================================
 // CUSTOMER DETAILS

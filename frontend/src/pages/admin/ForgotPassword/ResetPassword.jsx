@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import logo from "../../../assets/rizo-logo.png";
 import "./ResetPassword.css";
 
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = "https://rizo-ecommerce-backend.onrender.com/api/auth";
 
 function ResetPassword() {
   const navigate = useNavigate();

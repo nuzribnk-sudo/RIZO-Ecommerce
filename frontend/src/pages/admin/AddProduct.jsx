@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./AddProduct.css";
 
-const CATEGORY_API_URL = "http://localhost:5000/api/categories";
-const PRODUCT_API_URL = "http://localhost:5000/api/products";
+const CATEGORY_API_URL =  "https://rizo-ecommerce-backend.onrender.com/api/categories";;
+const PRODUCT_API_URL =  "https://rizo-ecommerce-backend.onrender.com/api/products";
 
 function AddProduct() {
   const navigate = useNavigate();

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./ContactMessageDetails.css";
 
-const API_URL = "http://localhost:5000/api/contacts";
+const API_URL = "https://rizo-ecommerce-backend.onrender.com/api/contacts";
 
 function ContactMessageDetails() {
   const { id } = useParams();

@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import "./Coupons.css";
 
 const API_URL =
-  "http://localhost:5000/api/coupons";
+  "https://rizo-ecommerce-backend.onrender.com/api/coupons";
 
 function Coupons() {
   const navigate = useNavigate();

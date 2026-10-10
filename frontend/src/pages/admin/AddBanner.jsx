@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./AddBanner.css";
 
-const API_URL = "http://localhost:5000/api/banners";
+const API_URL =  "https://rizo-ecommerce-backend.onrender.com/api/banners";
 
 function AddBanner() {
   const navigate = useNavigate();

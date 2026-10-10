@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./Orders.css";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://rizo-ecommerce-backend.onrender.com/api";
 const ORDERS_PER_PAGE = 10;
 
 // =========================================================

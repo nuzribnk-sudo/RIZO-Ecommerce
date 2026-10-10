@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 import "./ContactMessages.css";
 
-const API_URL = "http://localhost:5000/api/contacts";
+const API_URL = "https://rizo-ecommerce-backend.onrender.com/api/contacts";
 
 const ContactMessages = () => {
   const navigate = useNavigate();

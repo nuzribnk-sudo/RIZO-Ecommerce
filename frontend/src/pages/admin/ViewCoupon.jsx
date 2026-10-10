@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./ViewCoupon.css";
 
-const COUPON_API_URL = "http://localhost:5000/api/coupons";
-const PRODUCT_API_URL = "http://localhost:5000/api/products";
+const COUPON_API_URL =
+  "https://rizo-ecommerce-backend.onrender.com/api/coupons";
+
+const PRODUCT_API_URL =
+  "https://rizo-ecommerce-backend.onrender.com/api/products";
 
 function ViewCoupon() {
   const navigate = useNavigate();

@@ -18,7 +18,7 @@ function AdminLogin() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/login",
+        "https://rizo-ecommerce-backend.onrender.com/api/auth/login",
         {
           method: "POST",
           headers: {

@@ -12,8 +12,11 @@ import { toast } from "react-toastify";
 
 import "./Products.css";
 
-const API_URL = "http://localhost:5000/api/products";
-const CATEGORY_API_URL = "http://localhost:5000/api/categories";
+const API_URL =
+  "https://rizo-ecommerce-backend.onrender.com/api/products";
+
+const CATEGORY_API_URL =
+  "https://rizo-ecommerce-backend.onrender.com/api/categories";
 
 const PRODUCTS_PER_PAGE = 10;
 

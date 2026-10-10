@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./BannerView.css";
 
-const API_URL = "http://localhost:5000/api/banners";
+const API_URL = "https://rizo-ecommerce-backend.onrender.com/api/banners";
 
 function BannerView() {
   const navigate = useNavigate();

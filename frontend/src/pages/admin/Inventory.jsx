@@ -3,9 +3,11 @@ import { toast } from "react-toastify";
 
 import "./Inventory.css";
 
-const PRODUCTS_API = "http://localhost:5000/api/products";
-const CATEGORIES_API = "http://localhost:5000/api/categories";
+const PRODUCTS_API =
+  "https://rizo-ecommerce-backend.onrender.com/api/products";
 
+const CATEGORIES_API =
+  "https://rizo-ecommerce-backend.onrender.com/api/categories";
 const PRODUCTS_PER_PAGE = 10;
 
 function Inventory() {

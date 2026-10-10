@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AdminProfile.css";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://rizo-ecommerce-backend.onrender.com/api";
 
 function AdminProfile() {
   const navigate = useNavigate();
