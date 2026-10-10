@@ -1,11 +1,15 @@
+/* =========================
+   GLOBAL
+========================= */
+
 * {
   box-sizing: border-box;
 }
 
-
 /* =========================
    ADMIN SIDEBAR
 ========================= */
+
 .admin-sidebar {
   width: 250px;
   min-width: 250px;
@@ -27,6 +31,22 @@
 
   overflow-y: auto;
   overflow-x: hidden;
+
+  scrollbar-width: thin;
+  scrollbar-color: #3a3a3a #111111;
+}
+
+.admin-sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.admin-sidebar::-webkit-scrollbar-track {
+  background: #111111;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb {
+  background: #3a3a3a;
+  border-radius: 10px;
 }
 
 /* =========================
@@ -36,13 +56,14 @@
 .sidebar-logo {
   display: flex;
   align-items: center;
-
   gap: 9px;
 
   padding: 0 10px 16px;
   margin-bottom: 12px;
 
   border-bottom: 1px solid #2b2b2b;
+
+  flex-shrink: 0;
 }
 
 .sidebar-logo img {
@@ -50,8 +71,6 @@
   height: 34px;
 
   object-fit: contain;
-
-  /* Black logo to white */
   filter: brightness(0) invert(1);
 
   flex-shrink: 0;
@@ -60,14 +79,11 @@
 .sidebar-logo span {
   font-size: 19px;
   font-weight: 700;
-
   letter-spacing: 1.3px;
 
   color: #ffffff;
-
   white-space: nowrap;
 }
-
 
 /* =========================
    NAVIGATION
@@ -76,39 +92,43 @@
 .sidebar-nav {
   display: flex;
   flex-direction: column;
+  gap: 3px;
 
-  gap: 2px;
+  min-width: 0;
 }
 
 .sidebar-nav a {
   display: flex;
   align-items: center;
-
   gap: 11px;
 
-  color: #bdbdbd;
-
-  text-decoration: none;
-
+  width: 100%;
+  min-height: 38px;
   padding: 9px 13px;
+
+  color: #bdbdbd;
+  text-decoration: none;
 
   border-radius: 8px;
 
   font-size: 13px;
   font-weight: 500;
 
-  transition: all 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .sidebar-nav a i {
   width: 20px;
+  min-width: 20px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
   font-size: 15px;
-
   flex-shrink: 0;
 }
 
@@ -116,25 +136,19 @@
   white-space: nowrap;
 }
 
-
 /* Hover */
 
 .sidebar-nav a:hover {
   background: #262626;
-
   color: #ffffff;
-
   transform: translateX(2px);
 }
-
 
 /* Active */
 
 .sidebar-nav a.active {
   background: #ffffff;
-
   color: #111111;
-
   font-weight: 600;
 }
 
@@ -142,17 +156,16 @@
   color: #111111;
 }
 
-
 /* =========================
    BOTTOM SECTION
 ========================= */
 
 .sidebar-bottom {
   margin-top: auto;
+  padding-top: 15px;
 
-  padding-top: 8px;
+  flex-shrink: 0;
 }
-
 
 /* =========================
    SETTINGS
@@ -163,27 +176,25 @@
   align-items: center;
   gap: 11px;
 
+  width: 100%;
+  min-height: 38px;
+  padding: 10px 13px;
+  margin-bottom: 10px;
+
   color: #bdbdbd;
   text-decoration: none;
-
-  padding: 10px 13px;
-
-  margin-bottom: 10px;
 
   border-radius: 8px;
 
   font-size: 13px;
   font-weight: 500;
-  margin-bottom: 10px;
-}
-.sidebar-bottom {
-  margin-top: auto;
-  padding-top: 15px;
-}
 
+  transition: background 0.2s ease, color 0.2s ease;
+}
 
 .sidebar-settings i {
   width: 20px;
+  min-width: 20px;
 
   display: flex;
   align-items: center;
@@ -194,16 +205,13 @@
 
 .sidebar-settings:hover {
   background: #262626;
-
   color: #ffffff;
 }
 
 .sidebar-settings.active {
   background: #ffffff;
-
   color: #111111;
 }
-
 
 /* =========================
    DIVIDER
@@ -211,12 +219,11 @@
 
 .sidebar-divider {
   height: 1px;
+  min-height: 1px;
 
   background: #2b2b2b;
-
   margin: 0 6px 8px;
 }
-
 
 /* =========================
    ADMIN PROFILE
@@ -224,40 +231,34 @@
 
 .admin-profile {
   width: 100%;
+  min-width: 0;
 
   display: flex;
   align-items: center;
-
   gap: 9px;
 
   padding: 7px;
-
   margin-bottom: 7px;
 
   border: 1px solid #303030;
-
   border-radius: 9px;
 
   background: #151515;
-
   cursor: pointer;
 
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .admin-profile:hover {
   background: #1d1d1d;
-
   border-color: #444444;
 }
-
 
 /* Avatar */
 
 .admin-avatar {
   width: 34px;
   height: 34px;
-
   min-width: 34px;
 
   display: flex;
@@ -265,7 +266,6 @@
   justify-content: center;
 
   background: #ffffff;
-
   color: #111111;
 
   border-radius: 50%;
@@ -275,7 +275,6 @@
   font-size: 18px;
 }
 
-
 /* Admin details */
 
 .admin-info {
@@ -283,7 +282,6 @@
   flex-direction: column;
 
   flex: 1;
-
   min-width: 0;
 }
 
@@ -291,27 +289,31 @@
   color: #ffffff;
 
   font-size: 12px;
-
   font-weight: 600;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .admin-role {
   color: #999999;
 
   font-size: 10px;
-
   margin-top: 2px;
-}
 
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 /* Arrow */
 
 .admin-arrow {
   color: #aaaaaa;
-
   font-size: 11px;
+  flex-shrink: 0;
 }
-
 
 /* =========================
    LOGOUT
@@ -319,35 +321,33 @@
 
 .logout-btn {
   width: 100%;
+  min-height: 36px;
 
   display: flex;
   align-items: center;
-
   gap: 11px;
 
   padding: 8px 13px;
 
   border: 1px solid #333333;
-
   border-radius: 8px;
 
   background: transparent;
-
   color: #d5d5d5;
 
   cursor: pointer;
 
+  font-family: inherit;
   font-size: 13px;
-
   font-weight: 500;
-
   text-align: left;
 
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .logout-btn i {
   width: 20px;
+  min-width: 20px;
 
   display: flex;
   align-items: center;
@@ -362,17 +362,14 @@
 
 .logout-btn:hover {
   background: #ffffff;
-
   color: #111111;
 }
 
-
 /* =========================
-   SHORT HEIGHT SCREEN
+   SHORT HEIGHT SCREENS
 ========================= */
 
 @media (max-height: 750px) and (min-width: 601px) {
-
   .admin-sidebar {
     padding-top: 12px;
     padding-bottom: 12px;
@@ -397,8 +394,8 @@
   }
 
   .sidebar-nav a {
+    min-height: 32px;
     padding: 7px 12px;
-
     font-size: 12px;
   }
 
@@ -406,11 +403,14 @@
     font-size: 14px;
   }
 
+  .sidebar-bottom {
+    padding-top: 8px;
+  }
+
   .sidebar-settings {
+    min-height: 32px;
     padding: 7px 12px;
-
     margin-bottom: 5px;
-
     font-size: 12px;
   }
 
@@ -420,14 +420,12 @@
 
   .admin-profile {
     padding: 6px;
-
     margin-bottom: 5px;
   }
 
   .admin-avatar {
     width: 30px;
     height: 30px;
-
     min-width: 30px;
   }
 
@@ -444,19 +442,17 @@
   }
 
   .logout-btn {
+    min-height: 32px;
     padding: 7px 12px;
-
     font-size: 12px;
   }
 }
-
 
 /* =========================
    TABLET
 ========================= */
 
 @media (max-width: 800px) and (min-width: 601px) {
-
   .admin-sidebar {
     width: 220px;
     min-width: 220px;
@@ -471,7 +467,6 @@
 
   .sidebar-nav a {
     padding: 8px 10px;
-
     font-size: 12px;
   }
 
@@ -480,25 +475,26 @@
   }
 }
 
-
 /* =========================
    MOBILE
 ========================= */
 
 @media (max-width: 600px) {
-
   .admin-sidebar {
     width: 100%;
-    min-width: 100%;
+    min-width: 0;
 
     height: auto;
-    min-height: auto;
+    min-height: 0;
 
     position: relative;
+    top: auto;
+    left: auto;
 
     padding: 18px;
-  }
 
+    overflow: visible;
+  }
 
   /* Logo */
 
@@ -506,46 +502,51 @@
     justify-content: center;
 
     padding-bottom: 15px;
-
     margin-bottom: 14px;
   }
-
 
   /* Navigation */
 
   .sidebar-nav {
     flex-direction: row;
-
     flex-wrap: wrap;
 
     justify-content: center;
-
     gap: 5px;
   }
 
   .sidebar-nav a {
-    padding: 8px 10px;
+    width: auto;
+    max-width: 100%;
 
+    min-height: 34px;
+    padding: 8px 10px;
     gap: 7px;
 
     font-size: 12px;
+    transform: none;
+  }
+
+  .sidebar-nav a:hover {
+    transform: none;
   }
 
   .sidebar-nav a i {
     width: auto;
-
+    min-width: 0;
     font-size: 13px;
   }
 
+  .sidebar-nav a span {
+    white-space: nowrap;
+  }
 
   /* Bottom */
 
   .sidebar-bottom {
     margin-top: 15px;
-
     padding-top: 10px;
   }
-
 
   /* Settings */
 
@@ -553,16 +554,15 @@
     justify-content: center;
   }
 
-
   /* Profile */
 
   .admin-profile {
+    width: 100%;
     max-width: 280px;
 
     margin-left: auto;
     margin-right: auto;
   }
-
 
   /* Logout */
 
@@ -571,13 +571,11 @@
   }
 }
 
-
 /* =========================
    SMALL MOBILE
 ========================= */
 
 @media (max-width: 400px) {
-
   .admin-sidebar {
     padding: 15px 10px;
   }
@@ -586,10 +584,19 @@
     font-size: 16px;
   }
 
+  .sidebar-nav {
+    gap: 5px;
+  }
+
   .sidebar-nav a {
     padding: 7px 8px;
+    gap: 6px;
 
     font-size: 11px;
+  }
+
+  .sidebar-nav a i {
+    font-size: 12px;
   }
 
   .sidebar-settings {
