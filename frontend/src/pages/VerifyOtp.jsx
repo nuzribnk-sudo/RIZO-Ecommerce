@@ -79,7 +79,7 @@ function VerifyOtp() {
       setLoading(true);
 
       const response = await fetch(
-        "http://localhost:5000/api/auth/verify-otp",
+       "https://rizo-ecommerce-backend.onrender.com/api/auth/verify-otp",
         {
           method: "POST",
 
@@ -157,7 +157,7 @@ function VerifyOtp() {
       setLoading(true);
 
       const response = await fetch(
-        "http://localhost:5000/api/auth/resend-otp",
+       "https://rizo-ecommerce-backend.onrender.com/api/auth/resend-otp",
         {
           method: "POST",
 

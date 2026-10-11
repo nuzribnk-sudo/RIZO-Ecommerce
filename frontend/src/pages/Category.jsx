@@ -8,8 +8,10 @@ import Footer from "../components/Footer";
 
 import "./Category.css";
 
-const API_URL = "http://localhost:5000/api";
-const WISHLIST_API = "http://localhost:5000/api/wishlist";
+const API_URL = "https://rizo-ecommerce-backend.onrender.com/api";
+
+const WISHLIST_API =
+  "https://rizo-ecommerce-backend.onrender.com/api/wishlist";
 
 function Category() {
   const { slug, subcategorySlug } = useParams();

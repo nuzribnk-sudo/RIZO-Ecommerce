@@ -29,7 +29,7 @@ function Profile() {
         setError("");
 
         const response = await fetch(
-          "http://localhost:5000/api/users/profile",
+         "https://rizo-ecommerce-backend.onrender.com/api/users/profile",
           {
             method: "GET",
             headers: {

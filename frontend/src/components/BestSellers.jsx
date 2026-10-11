@@ -7,10 +7,10 @@ import toast from "react-hot-toast";
 import "./BestSellers.css";
 
 const API_URL =
-  "http://localhost:5000/api/products/best-sellers";
+  "https://rizo-ecommerce-backend.onrender.com/api/products/best-sellers";
 
 const WISHLIST_API =
-  "http://localhost:5000/api/wishlist";
+  "https://rizo-ecommerce-backend.onrender.com/api/wishlist";
 
 function BestSellers() {
   const navigate = useNavigate();

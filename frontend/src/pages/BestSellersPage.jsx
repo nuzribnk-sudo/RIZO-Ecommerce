@@ -12,7 +12,7 @@ import Footer from "../components/Footer";
 
 import "./BestSellersPage.css";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://rizo-ecommerce-backend.onrender.com/api";
 
 function BestSellersPage() {
   const [searchParams] = useSearchParams();

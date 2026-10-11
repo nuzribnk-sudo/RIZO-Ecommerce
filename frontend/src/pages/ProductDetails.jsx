@@ -40,7 +40,7 @@ function ProductDetails() {
         setRelatedProducts([]);
 
         const response = await fetch(
-          `http://localhost:5000/api/products/${id}`
+         `https://rizo-ecommerce-backend.onrender.com/api/products/${id}`
         );
 
         const data = await response.json();
@@ -102,7 +102,7 @@ function ProductDetails() {
         // current product, maximum 4 related products remain.
 
         const response = await fetch(
-          `http://localhost:5000/api/products?category=${currentCategoryId}&limit=5`
+          `https://rizo-ecommerce-backend.onrender.com/api/products?category=${currentCategoryId}&limit=5`
         );
 
         const data = await response.json();
@@ -222,7 +222,7 @@ function ProductDetails() {
       setAddingToCart(true);
 
       const response = await fetch(
-        "http://localhost:5000/api/cart/add",
+       "https://rizo-ecommerce-backend.onrender.com/api/cart/add",
         {
           method: "POST",
 

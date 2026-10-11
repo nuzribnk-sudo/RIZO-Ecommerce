@@ -6,7 +6,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "./Checkout.css";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://rizo-ecommerce-backend.onrender.com/api";
 
 function Checkout() {
   useEffect(() => {
@@ -1560,12 +1560,7 @@ function Checkout() {
                     image &&
                     !image.startsWith("http")
                   ) {
-                    image =
-                      `http://localhost:5000${
-                        image.startsWith("/")
-                          ? ""
-                          : "/"
-                      }${image}`;
+                   image = `https://rizo-ecommerce-backend.onrender.com${image.startsWith("/") ? "" : "/"}${image}`;
                   }
 
                   return (

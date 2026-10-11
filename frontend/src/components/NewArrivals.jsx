@@ -19,7 +19,7 @@ function NewArrivals() {
 
         // Fetch categories first
         const categoryResponse = await fetch(
-          "http://localhost:5000/api/categories/tree"
+          "https://rizo-ecommerce-backend.onrender.com/api/categories/tree"
         );
 
         const categoryData = await categoryResponse.json();
@@ -82,8 +82,8 @@ function NewArrivals() {
         params.append("category", categoryIds.join(","));
 
         const productResponse = await fetch(
-          `http://localhost:5000/api/products?${params.toString()}`
-        );
+  `https://rizo-ecommerce-backend.onrender.com/api/products?${params.toString()}`
+);
 
         const productData = await productResponse.json();
 

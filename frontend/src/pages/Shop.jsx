@@ -16,7 +16,7 @@ import Footer from "../components/Footer";
 
 import "./Shop.css";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://rizo-ecommerce-backend.onrender.com/api";
 
 function Shop() {
   const [searchParams] = useSearchParams();

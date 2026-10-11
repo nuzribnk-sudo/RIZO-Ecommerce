@@ -7,7 +7,7 @@ import Footer from "../components/Footer";
 
 import "./Invoicing.css";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://rizo-ecommerce-backend.onrender.com/api";
 
 const Invoicing = () => {
   const [orders, setOrders] = useState([]);

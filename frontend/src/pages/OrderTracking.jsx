@@ -3,7 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./OrderTracking.css";
 
-const API_URL = "http://localhost:5000/api";
+
+const API_URL = "https://rizo-ecommerce-backend.onrender.com/api";
 
 const OrderTracking = () => {
   const location = useLocation();
@@ -94,11 +95,11 @@ const OrderTracking = () => {
 
     // Backend /uploads/... or /images/...
     if (cleanImage.startsWith("/")) {
-      return `http://localhost:5000${cleanImage}`;
+      return `https://rizo-ecommerce-backend.onrender.com${cleanImage}`;
     }
 
     // uploads/... or images/...
-    return `http://localhost:5000/${cleanImage}`;
+   return `https://rizo-ecommerce-backend.onrender.com/${cleanImage.replace(/^\/+/, "")}`;
   };
 
   const getProductImage = (item) => {

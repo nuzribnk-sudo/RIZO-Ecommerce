@@ -39,7 +39,7 @@ function Login() {
       setLoading(true);
 
       const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        "https://rizo-ecommerce-backend.onrender.com/api/auth/login",
         {
           email,
           password,
@@ -143,7 +143,7 @@ function Login() {
 
             const result =
               await axios.post(
-                "http://localhost:5000/api/auth/google",
+                "https://rizo-ecommerce-backend.onrender.com/api/auth/google",
                 {
                   idToken,
                 }

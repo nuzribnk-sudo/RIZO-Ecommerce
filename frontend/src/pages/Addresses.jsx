@@ -30,7 +30,7 @@ function Addresses() {
   });
 
   const token = localStorage.getItem("token");
-  const API_URL = "http://localhost:5000/api/addresses";
+  const API_URL = "https://rizo-ecommerce-backend.onrender.com/api/addresses";
 
   useEffect(() => {
     if (!token) {

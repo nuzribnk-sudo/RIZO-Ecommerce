@@ -15,9 +15,9 @@ function CategoriesPage() {
 
     const fetchCategories = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:5000/api/categories/tree"
-        );
+       const response = await fetch(
+  "https://rizo-ecommerce-backend.onrender.com/api/categories/tree"
+);
 
         const data = await response.json();
 

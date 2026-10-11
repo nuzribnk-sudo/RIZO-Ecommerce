@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/rizo-logo.png";
@@ -10,6 +11,7 @@ function AdminLogin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -89,7 +91,6 @@ function AdminLogin() {
 
         {/* Login Form */}
         <form onSubmit={handleSubmit}>
-
           <div className="login-group">
             <label>Email Address</label>
 
@@ -107,15 +108,41 @@ function AdminLogin() {
           <div className="login-group">
             <label>Password</label>
 
-            <input
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) =>
-                setPassword(e.target.value)
-              }
-              required
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) =>
+                  setPassword(e.target.value)
+                }
+                autoComplete="current-password"
+                required
+              />
+
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() =>
+                  setShowPassword((prev) => !prev)
+                }
+                aria-label={
+                  showPassword
+                    ? "Hide password"
+                    : "Show password"
+                }
+                aria-pressed={showPassword}
+              >
+                <i
+                  className={
+                    showPassword
+                      ? "bi bi-eye-slash"
+                      : "bi bi-eye"
+                  }
+                  aria-hidden="true"
+                ></i>
+              </button>
+            </div>
           </div>
 
           {/* Error Message */}
@@ -148,7 +175,6 @@ function AdminLogin() {
               ? "Logging in..."
               : "Login"}
           </button>
-
         </form>
       </div>
     </div>
