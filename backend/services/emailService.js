@@ -7,9 +7,9 @@ const RESEND_API_URL = "https://api.resend.com/emails";
 
 const getEmailConfig = () => {
   const apiKey = process.env.RESEND_API_KEY;
+
   const fromEmail =
     process.env.RESEND_FROM_EMAIL ||
-    process.env.CONTACT_FROM_EMAIL ||
     "RIZO Fashion <onboarding@resend.dev>";
 
   if (!apiKey) {
@@ -71,17 +71,22 @@ const sendEmail = async ({
     console.error(
       "Resend API error:",
       response.status,
-      responseData.message || responseData.name || "Email request failed"
+      responseData.message ||
+        responseData.name ||
+        "Email request failed"
     );
 
     throw new Error(
       `Email delivery request failed (${response.status}): ${
-        responseData.message || responseData.name || "Resend API error"
+        responseData.message ||
+        responseData.name ||
+        "Resend API error"
       }`
     );
   }
 
   console.log("Resend accepted email:", responseData.id);
+
   return responseData;
 };
 
@@ -93,42 +98,67 @@ const verifyEmailConnection = async () => {
     console.log("Resend API configuration is present");
     return true;
   } catch (error) {
-    console.error("Email configuration check failed:", error.message);
+    console.error(
+      "Email configuration check failed:",
+      error.message
+    );
     return false;
   }
 };
 
-// ================= REGISTRATION OTP =================
+// ================= CUSTOMER REGISTRATION OTP =================
 
 const sendOtpEmail = async (email, otp) => {
   try {
+    if (!email) {
+      throw new Error("Customer email is required");
+    }
+
     return await sendEmail({
       to: email,
       subject: "RIZO - Email Verification OTP",
-      text: `Your RIZO verification OTP is ${otp}. It will expire in 10 minutes. If you did not request this, please ignore this email.`,
+      text: `Your RIZO verification OTP is ${otp}.
+
+It will expire in 10 minutes.
+
+If you did not request this, please ignore this email.`,
     });
   } catch (error) {
-    console.error("Registration OTP email failed:", error.message);
+    console.error(
+      "Registration OTP email failed:",
+      error.message
+    );
     throw new Error("Failed to send OTP email");
   }
 };
 
-// ================= PASSWORD RESET OTP TO ADMIN =================
+// ================= PASSWORD RESET OTP =================
 
 const sendResetOtpEmail = async (email, otp) => {
   try {
+    if (!email) {
+      throw new Error("Recipient email is required");
+    }
+
     return await sendEmail({
       to: email,
       subject: "RIZO - Password Reset OTP",
       text: `A password reset was requested for a RIZO account.
 
-OTP: ${otp}
+Your OTP is: ${otp}
 
-This OTP expires in 10 minutes. If you did not request this, please ignore this email.`,
+This OTP expires in 10 minutes.
+
+If you did not request this, please ignore this email.`,
     });
   } catch (error) {
-    console.error("Password reset email failed:", error.message);
-    throw new Error("Failed to send password reset OTP email");
+    console.error(
+      "Password reset email failed:",
+      error.message
+    );
+    throw new Error(
+      "Failed to send password reset OTP email"
+    );
   }
 };
 
@@ -227,7 +257,10 @@ Thank you for choosing RIZO Fashion!
       attachments,
     });
   } catch (error) {
-    console.error("Order confirmation email failed:", error.message);
+    console.error(
+      "Order confirmation email failed:",
+      error.message
+    );
     throw error;
   }
 };
@@ -269,7 +302,10 @@ Please log in to the RIZO admin panel to view the order.
       `.trim(),
     });
   } catch (error) {
-    console.error("New order admin email failed:", error.message);
+    console.error(
+      "New order admin email failed:",
+      error.message
+    );
     throw error;
   }
 };

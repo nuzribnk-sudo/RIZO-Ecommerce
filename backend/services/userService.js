@@ -18,10 +18,7 @@ const getProfile = async (userId) => {
 // ================= UPDATE PROFILE =================
 
 const updateProfile = async (userId, data) => {
-  const allowedFields = [
-    "name",
-    "phone",
-  ];
+  const allowedFields = ["name", "phone"];
 
   const updates = {};
 
@@ -155,9 +152,7 @@ const getAllUsers = async ({
     .skip(skip)
     .limit(itemsPerPage);
 
-  const totalPages = Math.ceil(
-    total / itemsPerPage
-  );
+  const totalPages = Math.ceil(total / itemsPerPage);
 
   return {
     users,
@@ -245,6 +240,12 @@ const changePassword = async (
     );
   }
 
+  if (!user.password) {
+    throw new Error(
+      "This account does not have a password. Please use Google Login."
+    );
+  }
+
   const passwordMatch = await bcrypt.compare(
     currentPassword,
     user.password
@@ -254,10 +255,7 @@ const changePassword = async (
     throw new Error("Current password is incorrect");
   }
 
-  user.password = await bcrypt.hash(
-    newPassword,
-    10
-  );
+  user.password = await bcrypt.hash(newPassword, 10);
 
   await user.save();
 

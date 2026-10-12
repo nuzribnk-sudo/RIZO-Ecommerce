@@ -29,8 +29,10 @@ const registerUser = async ({
   phone,
   password,
 }) => {
+  const normalizedEmail = email?.trim().toLowerCase();
+
   const existingEmail = await User.findOne({
-    email,
+    email: normalizedEmail,
   });
 
   if (existingEmail) {
@@ -45,10 +47,7 @@ const registerUser = async ({
     throw new Error("Phone number already registered");
   }
 
-  const hashedPassword = await bcrypt.hash(
-    password,
-    10
-  );
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   const otp = generateOtp();
 
@@ -62,7 +61,7 @@ const registerUser = async ({
         [
           {
             name,
-            email,
+            email: normalizedEmail,
             phone,
             password: hashedPassword,
             otp,
@@ -80,9 +79,7 @@ const registerUser = async ({
       user = createdUsers[0];
 
       const admin =
-        await notificationService.getAdminUser(
-          session
-        );
+        await notificationService.getAdminUser(session);
 
       if (admin) {
         await notificationService.createNotification(
@@ -101,20 +98,21 @@ const registerUser = async ({
   }
 
   // Registration OTP goes to the customer's email.
-  await sendOtpEmail(email, otp);
+  await sendOtpEmail(normalizedEmail, otp);
 
   return {
     userId: user._id,
-    message:
-      "Registration successful. OTP sent to your email.",
+    message: "Registration successful. OTP sent to your email.",
   };
 };
 
 // ================= VERIFY EMAIL OTP =================
 
 const verifyEmailOtp = async (email, otp) => {
+  const normalizedEmail = email?.trim().toLowerCase();
+
   const user = await User.findOne({
-    email,
+    email: normalizedEmail,
   });
 
   if (!user) {
@@ -170,8 +168,10 @@ const verifyEmailOtp = async (email, otp) => {
 // ================= RESEND OTP =================
 
 const resendOtp = async (email) => {
+  const normalizedEmail = email?.trim().toLowerCase();
+
   const user = await User.findOne({
-    email,
+    email: normalizedEmail,
   });
 
   if (!user) {
@@ -192,7 +192,7 @@ const resendOtp = async (email) => {
 
   await user.save();
 
-  await sendOtpEmail(email, otp);
+  await sendOtpEmail(normalizedEmail, otp);
 
   return {
     message: "New OTP sent successfully",
@@ -201,12 +201,11 @@ const resendOtp = async (email) => {
 
 // ================= LOGIN USER =================
 
-const loginUser = async ({
-  email,
-  password,
-}) => {
+const loginUser = async ({ email, password }) => {
+  const normalizedEmail = email?.trim().toLowerCase();
+
   const user = await User.findOne({
-    email,
+    email: normalizedEmail,
   });
 
   if (!user) {
@@ -275,9 +274,7 @@ const googleLogin = async (idToken) => {
       error.message
     );
 
-    throw new Error(
-      "Invalid Google authentication token"
-    );
+    throw new Error("Invalid Google authentication token");
   }
 
   const payload = ticket.getPayload();
@@ -303,7 +300,7 @@ const googleLogin = async (idToken) => {
     throw new Error("Google email is not verified");
   }
 
-  const normalizedEmail = email.toLowerCase();
+  const normalizedEmail = email.trim().toLowerCase();
 
   let user = await User.findOne({
     googleId,
@@ -364,19 +361,14 @@ const googleLogin = async (idToken) => {
 // ================= FORGOT PASSWORD =================
 
 const forgotPassword = async (email) => {
+  const normalizedEmail = email?.trim().toLowerCase();
+
   const user = await User.findOne({
-    email,
+    email: normalizedEmail,
   });
 
   if (!user) {
     throw new Error("User not found");
-  }
-
-  // Admin email from .env
-  const adminEmail = process.env.EMAIL_USER;
-
-  if (!adminEmail) {
-    throw new Error("EMAIL_USER is not configured");
   }
 
   const otp = generateOtp();
@@ -388,11 +380,11 @@ const forgotPassword = async (email) => {
 
   await user.save();
 
-  // Forgot-password OTP goes to the admin email.
-  await sendResetOtpEmail(adminEmail, otp);
+  // Forgot-password OTP goes to the customer's email.
+  await sendResetOtpEmail(normalizedEmail, otp);
 
   return {
-    message: "Password reset OTP sent to the admin email",
+    message: "Password reset OTP sent to your email",
   };
 };
 
@@ -403,8 +395,10 @@ const resetPassword = async ({
   otp,
   newPassword,
 }) => {
+  const normalizedEmail = email?.trim().toLowerCase();
+
   const user = await User.findOne({
-    email,
+    email: normalizedEmail,
   });
 
   if (!user) {
@@ -429,10 +423,7 @@ const resetPassword = async ({
     );
   }
 
-  const hashedPassword = await bcrypt.hash(
-    newPassword,
-    10
-  );
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
 
   user.password = hashedPassword;
   user.resetOtp = null;
