@@ -15,7 +15,10 @@ const createTransporter = () => {
   }
 
   return nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    family: 4,
     auth: {
       user: smtpEmail,
       pass: smtpAppPassword,
@@ -38,39 +41,48 @@ const sendEmail = async ({
 
   const transporter = createTransporter();
 
-  const result = await transporter.sendMail({
-    from: {
-      name: "RIZO Fashion",
-      address: process.env.SMTP_EMAIL,
-    },
-    to,
-    subject,
-    text,
-    ...(replyTo ? { replyTo } : {}),
-    attachments: attachments.map((attachment) => ({
-      filename: attachment.filename,
-      content: attachment.content,
-      contentType:
-        attachment.contentType || "application/octet-stream",
-    })),
-  });
+  try {
+    const result = await transporter.sendMail({
+      from: {
+        name: "RIZO Fashion",
+        address: process.env.SMTP_EMAIL,
+      },
+      to,
+      subject,
+      text,
+      ...(replyTo ? { replyTo } : {}),
+      attachments: attachments.map((attachment) => ({
+        filename: attachment.filename,
+        content: attachment.content,
+        contentType:
+          attachment.contentType || "application/octet-stream",
+      })),
+    });
 
-  console.log("Email accepted by SMTP server:", result.messageId);
-
-  return result;
+    console.log("Email accepted by SMTP server:", result.messageId);
+    return result;
+  } finally {
+    transporter.close();
+  }
 };
 
 // ================= VERIFY EMAIL CONFIGURATION =================
 
 const verifyEmailConnection = async () => {
+  let transporter;
+
   try {
-    const transporter = createTransporter();
+    transporter = createTransporter();
     await transporter.verify();
     console.log("Gmail SMTP connection verified");
     return true;
   } catch (error) {
     console.error("Email connection check failed:", error.message);
     return false;
+  } finally {
+    if (transporter) {
+      transporter.close();
+    }
   }
 };
 
@@ -96,7 +108,11 @@ const sendResetOtpEmail = async (email, otp) => {
     return await sendEmail({
       to: email,
       subject: "RIZO - Password Reset OTP",
-      text: `A password reset was requested for a RIZO account.\n\nOTP: ${otp}\n\nThis OTP expires in 10 minutes.`,
+      text: `A password reset was requested for a RIZO account.
+
+OTP: ${otp}
+
+This OTP expires in 10 minutes.`,
     });
   } catch (error) {
     console.error("Password reset email failed:", error.message);
@@ -215,6 +231,7 @@ const sendNewOrderAdminEmail = async ({ order, customer }) => {
     }
 
     const orderId = order?._id?.toString() || "N/A";
+
     const customerName =
       customer?.name ||
       order?.shippingAddress?.fullName ||
