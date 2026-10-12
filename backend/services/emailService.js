@@ -1,34 +1,87 @@
 
 require("dotenv").config();
 
-const nodemailer = require("nodemailer");
+// ================= COMMON RESEND EMAIL SENDER =================
 
-// ================= EMAIL TRANSPORT =================
+const sendEmail = async ({
+  to,
+  subject,
+  text,
+  replyTo,
+  attachments = [],
+}) => {
+  const apiKey = process.env.RESEND_API_KEY;
+  const fromEmail = process.env.CONTACT_FROM_EMAIL;
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  connectionTimeout: 20000,
-  greetingTimeout: 20000,
-  socketTimeout: 30000,
-});
+  if (!apiKey) {
+    throw new Error("RESEND_API_KEY is not configured");
+  }
 
-// ================= TEST EMAIL CONNECTION =================
+  if (!fromEmail) {
+    throw new Error("CONTACT_FROM_EMAIL is not configured");
+  }
+
+  if (!to) {
+    throw new Error("Recipient email is required");
+  }
+
+  const payload = {
+    from: fromEmail,
+    to: Array.isArray(to) ? to : [to],
+    subject,
+    text,
+  };
+
+  if (replyTo) {
+    payload.reply_to = replyTo;
+  }
+
+  if (attachments.length > 0) {
+    payload.attachments = attachments.map((attachment) => ({
+      filename: attachment.filename,
+      content: Buffer.from(attachment.content).toString("base64"),
+      content_type: attachment.contentType || "application/octet-stream",
+    }));
+  }
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const result = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    console.error("Resend email failed:", result);
+    throw new Error(
+      result.message || result.error || `Email sending failed (${response.status})`
+    );
+  }
+
+  console.log("Email sent successfully. Resend ID:", result.id);
+  return result;
+};
+
+// ================= TEST EMAIL CONFIGURATION =================
 
 const verifyEmailConnection = async () => {
   try {
-    await transporter.verify();
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error("RESEND_API_KEY is not configured");
+    }
 
-    console.log("Email server is ready");
-    console.log("Sender email:", process.env.EMAIL_USER);
+    if (!process.env.CONTACT_FROM_EMAIL) {
+      throw new Error("CONTACT_FROM_EMAIL is not configured");
+    }
+
+    console.log("Resend email configuration is present");
+    console.log("Sender email:", process.env.CONTACT_FROM_EMAIL);
   } catch (error) {
-    console.error("Email server connection failed:");
-    console.error(error.message);
+    console.error("Email configuration check failed:", error.message);
   }
 };
 
@@ -36,108 +89,67 @@ const verifyEmailConnection = async () => {
 
 const sendOtpEmail = async (email, otp) => {
   try {
-    console.log("=================================");
-    console.log("Sending registration OTP");
-    console.log("From:", process.env.EMAIL_USER);
-    console.log("To:", email);
-    console.log("=================================");
-
-    const info = await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    return await sendEmail({
       to: email,
-      subject: "E-Commerce Email Verification OTP",
+      subject: "RIZO - Email Verification OTP",
       text: `Your verification OTP is ${otp}. It will expire in 10 minutes.`,
     });
-
-    console.log("Registration OTP email sent successfully");
-    console.log("Message ID:", info.messageId);
-
-    return info;
   } catch (error) {
-    console.error("Registration OTP email failed:");
-    console.error(error.message);
-
+    console.error("Registration OTP email failed:", error.message);
     throw new Error("Failed to send OTP email");
   }
 };
 
-// ================= SEND RESET PASSWORD OTP =================
+// ================= SEND PASSWORD RESET OTP =================
 
 const sendResetOtpEmail = async (email, otp) => {
   try {
-    console.log("=================================");
-    console.log("Sending password reset OTP");
-    console.log("From:", process.env.EMAIL_USER);
-    console.log("To:", email);
-    console.log("=================================");
-
-    const info = await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    return await sendEmail({
       to: email,
-      subject: "E-Commerce Password Reset OTP",
+      subject: "RIZO - Password Reset OTP",
       text: `Your password reset OTP is ${otp}. It will expire in 10 minutes.`,
     });
-
-    console.log("Password reset OTP email sent successfully");
-    console.log("Message ID:", info.messageId);
-
-    return info;
   } catch (error) {
-    console.error("Password reset OTP email failed:");
-    console.error(error.message);
-
+    console.error("Password reset OTP email failed:", error.message);
     throw new Error("Failed to send password reset OTP email");
   }
 };
 
-// ================= SEND CONTACT MESSAGE =================
+// ================= SEND CONTACT MESSAGE TO ADMIN =================
 
-const sendContactEmail = async ({
-  name,
-  email,
-  phone,
-  comment,
-}) => {
+const sendContactEmail = async ({ name, email, phone, comment }) => {
   try {
-    console.log("=================================");
-    console.log("Sending contact message email");
-    console.log("From:", process.env.EMAIL_USER);
-    console.log("Customer:", email);
-    console.log("=================================");
+    const adminEmail = process.env.EMAIL_USER;
 
-    const info = await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER,
+    if (!adminEmail) {
+      throw new Error("Admin email (EMAIL_USER) is not configured");
+    }
+
+    return await sendEmail({
+      to: adminEmail,
       replyTo: email,
-      subject: "New Contact Form Message - E-Commerce",
+      subject: "New Contact Form Message - RIZO Fashion",
       text: `
 New Contact Form Message
 
-Name: ${name}
-Email: ${email}
-Phone: ${phone}
+Name: ${name || "N/A"}
+Email: ${email || "N/A"}
+Phone: ${phone || "N/A"}
 
-Comment:
-${comment}
+Message:
+${comment || "No message provided"}
 
 --------------------------------
-This message was submitted from the E-Commerce website Contact page.
-      `,
+Submitted from the RIZO Fashion Contact page.
+      `.trim(),
     });
-
-    console.log("Contact email sent successfully");
-    console.log("Message ID:", info.messageId);
-
-    return info;
   } catch (error) {
-    console.error("Contact email failed:");
-    console.error(error.message);
-
+    console.error("Contact email failed:", error.message);
     throw new Error("Failed to send contact email");
   }
 };
 
-// ================= SEND ORDER CONFIRMATION EMAIL =================
+// ================= SEND CUSTOMER ORDER CONFIRMATION =================
 
 const sendOrderConfirmationEmail = async ({
   order,
@@ -151,118 +163,96 @@ const sendOrderConfirmationEmail = async ({
 
     const customerName =
       user.name ||
-      order.shippingAddress?.fullName ||
+      order?.shippingAddress?.fullName ||
       "Customer";
 
-    const orderId = order._id?.toString() || "N/A";
-    const finalAmount = Number(order.finalAmount || 0);
+    const orderId = order?._id?.toString() || "N/A";
+    const finalAmount = Number(order?.finalAmount || 0);
 
-    console.log("=================================");
-    console.log("Sending order confirmation email");
-    console.log("From:", process.env.EMAIL_USER);
-    console.log("To:", user.email);
-    console.log("Order ID:", orderId);
-    console.log("=================================");
+    const attachments = invoiceBuffer
+      ? [
+          {
+            filename: `invoice-${orderId}.pdf`,
+            content: invoiceBuffer,
+            contentType: "application/pdf",
+          },
+        ]
+      : [];
 
-    const info = await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    return await sendEmail({
       to: user.email,
-      subject: `Order Confirmation - #${orderId}`,
+      subject: `RIZO - Order Confirmation #${orderId}`,
       text: `
 Hello ${customerName},
 
-Thank you for your order!
+Thank you for shopping with RIZO Fashion!
 
-Your order has been confirmed successfully.
+Your order has been confirmed.
 
 Order ID: ${orderId}
-Payment Method: ${order.paymentMethod || "N/A"}
-Payment Status: ${order.paymentStatus || "N/A"}
-Order Status: ${order.orderStatus || "N/A"}
+Payment Method: ${order?.paymentMethod || "N/A"}
+Payment Status: ${order?.paymentStatus || "N/A"}
+Order Status: ${order?.orderStatus || "N/A"}
 Total Amount: Rs. ${finalAmount.toFixed(2)}
 
-Your invoice is attached to this email as a PDF.
+${invoiceBuffer ? "Your PDF invoice is attached to this email." : "Your invoice is currently unavailable."}
 
-Thank you for choosing Rizo Fashion!
-      `,
-      attachments: invoiceBuffer
-        ? [
-            {
-              filename: `invoice-${orderId}.pdf`,
-              content: invoiceBuffer,
-              contentType: "application/pdf",
-            },
-          ]
-        : [],
+Thank you for choosing RIZO Fashion!
+      `.trim(),
+      attachments,
     });
-
-    console.log("Order confirmation email sent successfully");
-    console.log("Message ID:", info.messageId);
-
-    return info;
   } catch (error) {
-    console.error("Order confirmation email failed:");
-    console.error(error.message);
-
+    console.error("Order confirmation email failed:", error.message);
     throw error;
   }
 };
 
-// ================= SEND NEW ORDER ADMIN EMAIL =================
+// ================= SEND NEW ORDER NOTIFICATION TO ADMIN =================
 
-const sendNewOrderAdminEmail = async ({
-  order,
-  customer,
-}) => {
+const sendNewOrderAdminEmail = async ({ order, customer }) => {
   try {
     const adminEmail = process.env.EMAIL_USER;
 
     if (!adminEmail) {
-      throw new Error("Admin email not configured");
+      throw new Error("Admin email (EMAIL_USER) is not configured");
     }
 
-    const orderId = order._id?.toString() || "N/A";
+    const orderId = order?._id?.toString() || "N/A";
 
     const customerName =
       customer?.name ||
-      order.shippingAddress?.fullName ||
+      order?.shippingAddress?.fullName ||
       "Customer";
 
     const customerEmail = customer?.email || "N/A";
-    const finalAmount = Number(order.finalAmount || 0);
+    const finalAmount = Number(order?.finalAmount || 0);
 
-    const info = await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    return await sendEmail({
       to: adminEmail,
-      subject: `New Order Received - #${orderId}`,
+      subject: `RIZO - New Order Received #${orderId}`,
       text: `
 New Order Received
 
-A new order has been placed on Rizo Fashion.
+A new order has been placed on RIZO Fashion.
 
 Order ID: ${orderId}
 Customer Name: ${customerName}
 Customer Email: ${customerEmail}
-Payment Method: ${order.paymentMethod || "N/A"}
-Payment Status: ${order.paymentStatus || "N/A"}
-Order Status: ${order.orderStatus || "N/A"}
+Payment Method: ${order?.paymentMethod || "N/A"}
+Payment Status: ${order?.paymentStatus || "N/A"}
+Order Status: ${order?.orderStatus || "N/A"}
 Total Amount: Rs. ${finalAmount.toFixed(2)}
 
 Please log in to the admin panel to view the complete order details.
-      `,
+      `.trim(),
     });
-
-    console.log("New order admin email sent successfully");
-    console.log("Message ID:", info.messageId);
-
-    return info;
   } catch (error) {
-    console.error("New order admin email failed:");
-    console.error(error.message);
-
+    console.error("New order admin email failed:", error.message);
     throw error;
   }
 };
+
+// ================= EXPORT FUNCTIONS =================
 
 module.exports = {
   verifyEmailConnection,
