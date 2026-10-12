@@ -1,29 +1,22 @@
 
 require("dotenv").config();
-const nodemailer = require("nodemailer");
 
-// ================= GMAIL SMTP CONFIGURATION =================
+// ================= RESEND API CONFIGURATION =================
 
-const createTransporter = () => {
-  const smtpEmail = process.env.SMTP_EMAIL;
-  const smtpAppPassword = process.env.SMTP_APP_PASSWORD;
+const RESEND_API_URL = "https://api.resend.com/emails";
 
-  if (!smtpEmail || !smtpAppPassword) {
-    throw new Error(
-      "SMTP_EMAIL or SMTP_APP_PASSWORD is not configured"
-    );
+const getEmailConfig = () => {
+  const apiKey = process.env.RESEND_API_KEY;
+  const fromEmail =
+    process.env.RESEND_FROM_EMAIL ||
+    process.env.CONTACT_FROM_EMAIL ||
+    "RIZO Fashion <onboarding@resend.dev>";
+
+  if (!apiKey) {
+    throw new Error("RESEND_API_KEY is not configured");
   }
 
-  return nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    family: 4,
-    auth: {
-      user: smtpEmail,
-      pass: smtpAppPassword,
-    },
-  });
+  return { apiKey, fromEmail };
 };
 
 // ================= COMMON EMAIL SENDER =================
@@ -39,50 +32,69 @@ const sendEmail = async ({
     throw new Error("Recipient email is required");
   }
 
-  const transporter = createTransporter();
+  const { apiKey, fromEmail } = getEmailConfig();
 
-  try {
-    const result = await transporter.sendMail({
-      from: {
-        name: "RIZO Fashion",
-        address: process.env.SMTP_EMAIL,
-      },
-      to,
-      subject,
-      text,
-      ...(replyTo ? { replyTo } : {}),
-      attachments: attachments.map((attachment) => ({
-        filename: attachment.filename,
-        content: attachment.content,
-        contentType:
-          attachment.contentType || "application/octet-stream",
-      })),
-    });
+  const payload = {
+    from: fromEmail,
+    to: Array.isArray(to) ? to : [to],
+    subject,
+    text,
+  };
 
-    console.log("Email accepted by SMTP server:", result.messageId);
-    return result;
-  } finally {
-    transporter.close();
+  if (replyTo) {
+    payload.reply_to = replyTo;
   }
+
+  if (attachments.length > 0) {
+    payload.attachments = attachments.map((attachment) => ({
+      filename: attachment.filename,
+      content: Buffer.isBuffer(attachment.content)
+        ? attachment.content.toString("base64")
+        : attachment.content,
+      content_type:
+        attachment.contentType || "application/octet-stream",
+    }));
+  }
+
+  const response = await fetch(RESEND_API_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const responseData = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    console.error(
+      "Resend API error:",
+      response.status,
+      responseData.message || responseData.name || "Email request failed"
+    );
+
+    throw new Error(
+      `Email delivery request failed (${response.status}): ${
+        responseData.message || responseData.name || "Resend API error"
+      }`
+    );
+  }
+
+  console.log("Resend accepted email:", responseData.id);
+  return responseData;
 };
 
 // ================= VERIFY EMAIL CONFIGURATION =================
 
 const verifyEmailConnection = async () => {
-  let transporter;
-
   try {
-    transporter = createTransporter();
-    await transporter.verify();
-    console.log("Gmail SMTP connection verified");
+    getEmailConfig();
+    console.log("Resend API configuration is present");
     return true;
   } catch (error) {
-    console.error("Email connection check failed:", error.message);
+    console.error("Email configuration check failed:", error.message);
     return false;
-  } finally {
-    if (transporter) {
-      transporter.close();
-    }
   }
 };
 
@@ -93,7 +105,7 @@ const sendOtpEmail = async (email, otp) => {
     return await sendEmail({
       to: email,
       subject: "RIZO - Email Verification OTP",
-      text: `Your verification OTP is ${otp}. It will expire in 10 minutes.`,
+      text: `Your RIZO verification OTP is ${otp}. It will expire in 10 minutes. If you did not request this, please ignore this email.`,
     });
   } catch (error) {
     console.error("Registration OTP email failed:", error.message);
@@ -112,7 +124,7 @@ const sendResetOtpEmail = async (email, otp) => {
 
 OTP: ${otp}
 
-This OTP expires in 10 minutes.`,
+This OTP expires in 10 minutes. If you did not request this, please ignore this email.`,
     });
   } catch (error) {
     console.error("Password reset email failed:", error.message);
