@@ -1,22 +1,30 @@
 
 require("dotenv").config();
+const nodemailer = require("nodemailer");
 
-// ================= RESEND API CONFIGURATION =================
-
-const RESEND_API_URL = "https://api.resend.com/emails";
+// ================= GMAIL SMTP CONFIGURATION =================
 
 const getEmailConfig = () => {
-  const apiKey = process.env.RESEND_API_KEY;
+  const emailUser = process.env.EMAIL_USER;
+  const emailPass = process.env.EMAIL_PASS;
 
-  const fromEmail =
-    process.env.RESEND_FROM_EMAIL ||
-    "RIZO Fashion <onboarding@resend.dev>";
-
-  if (!apiKey) {
-    throw new Error("RESEND_API_KEY is not configured");
+  if (!emailUser || !emailPass) {
+    throw new Error("EMAIL_USER or EMAIL_PASS is not configured");
   }
 
-  return { apiKey, fromEmail };
+  return { emailUser, emailPass };
+};
+
+const createTransporter = () => {
+  const { emailUser, emailPass } = getEmailConfig();
+
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: emailUser,
+      pass: emailPass,
+    },
+  });
 };
 
 // ================= COMMON EMAIL SENDER =================
@@ -32,76 +40,46 @@ const sendEmail = async ({
     throw new Error("Recipient email is required");
   }
 
-  const { apiKey, fromEmail } = getEmailConfig();
+  const { emailUser } = getEmailConfig();
+  const transporter = createTransporter();
 
-  const payload = {
-    from: fromEmail,
-    to: Array.isArray(to) ? to : [to],
+  const mailOptions = {
+    from: `"RIZO Fashion" <${emailUser}>`,
+    to: Array.isArray(to) ? to.join(", ") : to,
     subject,
     text,
   };
 
   if (replyTo) {
-    payload.reply_to = replyTo;
+    mailOptions.replyTo = replyTo;
   }
 
   if (attachments.length > 0) {
-    payload.attachments = attachments.map((attachment) => ({
+    mailOptions.attachments = attachments.map((attachment) => ({
       filename: attachment.filename,
-      content: Buffer.isBuffer(attachment.content)
-        ? attachment.content.toString("base64")
-        : attachment.content,
-      content_type:
-        attachment.contentType || "application/octet-stream",
+      content: attachment.content,
+      contentType: attachment.contentType || "application/octet-stream",
     }));
   }
 
-  const response = await fetch(RESEND_API_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
+  const info = await transporter.sendMail(mailOptions);
 
-  const responseData = await response.json().catch(() => ({}));
+  console.log("Email accepted by SMTP:", info.messageId);
 
-  if (!response.ok) {
-    console.error(
-      "Resend API error:",
-      response.status,
-      responseData.message ||
-        responseData.name ||
-        "Email request failed"
-    );
-
-    throw new Error(
-      `Email delivery request failed (${response.status}): ${
-        responseData.message ||
-        responseData.name ||
-        "Resend API error"
-      }`
-    );
-  }
-
-  console.log("Resend accepted email:", responseData.id);
-
-  return responseData;
+  return info;
 };
 
 // ================= VERIFY EMAIL CONFIGURATION =================
 
 const verifyEmailConnection = async () => {
   try {
-    getEmailConfig();
-    console.log("Resend API configuration is present");
+    const transporter = createTransporter();
+    await transporter.verify();
+
+    console.log("Gmail SMTP connection verified");
     return true;
   } catch (error) {
-    console.error(
-      "Email configuration check failed:",
-      error.message
-    );
+    console.error("Email connection check failed:", error.message);
     return false;
   }
 };
@@ -124,10 +102,7 @@ It will expire in 10 minutes.
 If you did not request this, please ignore this email.`,
     });
   } catch (error) {
-    console.error(
-      "Registration OTP email failed:",
-      error.message
-    );
+    console.error("Registration OTP email failed:", error.message);
     throw new Error("Failed to send OTP email");
   }
 };
@@ -152,24 +127,14 @@ This OTP expires in 10 minutes.
 If you did not request this, please ignore this email.`,
     });
   } catch (error) {
-    console.error(
-      "Password reset email failed:",
-      error.message
-    );
-    throw new Error(
-      "Failed to send password reset OTP email"
-    );
+    console.error("Password reset email failed:", error.message);
+    throw new Error("Failed to send password reset OTP email");
   }
 };
 
 // ================= CONTACT MESSAGE TO ADMIN =================
 
-const sendContactEmail = async ({
-  name,
-  email,
-  phone,
-  comment,
-}) => {
+const sendContactEmail = async ({ name, email, phone, comment }) => {
   try {
     const adminEmail = process.env.EMAIL_USER;
 
@@ -213,9 +178,7 @@ const sendOrderConfirmationEmail = async ({
     }
 
     const customerName =
-      user.name ||
-      order?.shippingAddress?.fullName ||
-      "Customer";
+      user.name || order?.shippingAddress?.fullName || "Customer";
 
     const orderId = order?._id?.toString() || "N/A";
     const finalAmount = Number(order?.finalAmount || 0);
@@ -257,10 +220,7 @@ Thank you for choosing RIZO Fashion!
       attachments,
     });
   } catch (error) {
-    console.error(
-      "Order confirmation email failed:",
-      error.message
-    );
+    console.error("Order confirmation email failed:", error.message);
     throw error;
   }
 };
@@ -278,9 +238,7 @@ const sendNewOrderAdminEmail = async ({ order, customer }) => {
     const orderId = order?._id?.toString() || "N/A";
 
     const customerName =
-      customer?.name ||
-      order?.shippingAddress?.fullName ||
-      "Customer";
+      customer?.name || order?.shippingAddress?.fullName || "Customer";
 
     const finalAmount = Number(order?.finalAmount || 0);
 
@@ -302,10 +260,7 @@ Please log in to the RIZO admin panel to view the order.
       `.trim(),
     });
   } catch (error) {
-    console.error(
-      "New order admin email failed:",
-      error.message
-    );
+    console.error("New order admin email failed:", error.message);
     throw error;
   }
 };
