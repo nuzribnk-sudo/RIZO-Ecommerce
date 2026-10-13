@@ -1,30 +1,28 @@
 
 require("dotenv").config();
-const nodemailer = require("nodemailer");
 
-// ================= GMAIL SMTP CONFIGURATION =================
+// ================= BREVO API CONFIGURATION =================
+
+const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
 
 const getEmailConfig = () => {
-  const emailUser = process.env.EMAIL_USER;
-  const emailPass = process.env.EMAIL_PASS;
+  const apiKey = process.env.BREVO_API_KEY;
+  const fromEmail = process.env.BREVO_FROM_EMAIL;
+  const adminEmail = process.env.EMAIL_USER;
 
-  if (!emailUser || !emailPass) {
-    throw new Error("EMAIL_USER or EMAIL_PASS is not configured");
+  if (!apiKey) {
+    throw new Error("BREVO_API_KEY is not configured");
   }
 
-  return { emailUser, emailPass };
-};
+  if (!fromEmail) {
+    throw new Error("BREVO_FROM_EMAIL is not configured");
+  }
 
-const createTransporter = () => {
-  const { emailUser, emailPass } = getEmailConfig();
-
-  return nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: emailUser,
-      pass: emailPass,
-    },
-  });
+  return {
+    apiKey,
+    fromEmail,
+    adminEmail,
+  };
 };
 
 // ================= COMMON EMAIL SENDER =================
@@ -36,50 +34,109 @@ const sendEmail = async ({
   replyTo,
   attachments = [],
 }) => {
-  if (!to) {
+  if (!to || (Array.isArray(to) && to.length === 0)) {
     throw new Error("Recipient email is required");
   }
 
-  const { emailUser } = getEmailConfig();
-  const transporter = createTransporter();
+  if (!subject || !text) {
+    throw new Error("Email subject and content are required");
+  }
 
-  const mailOptions = {
-    from: `"RIZO Fashion" <${emailUser}>`,
-    to: Array.isArray(to) ? to.join(", ") : to,
+  const { apiKey, fromEmail } = getEmailConfig();
+
+  const recipients = (Array.isArray(to) ? to : [to])
+    .filter(Boolean)
+    .map((email) => ({ email }));
+
+  if (recipients.length === 0) {
+    throw new Error("A valid recipient email is required");
+  }
+
+  const payload = {
+    sender: {
+      name: "RIZO Fashion",
+      email: fromEmail,
+    },
+    to: recipients,
     subject,
-    text,
+    textContent: text,
   };
 
   if (replyTo) {
-    mailOptions.replyTo = replyTo;
+    payload.replyTo = {
+      email: replyTo,
+    };
   }
 
   if (attachments.length > 0) {
-    mailOptions.attachments = attachments.map((attachment) => ({
-      filename: attachment.filename,
-      content: attachment.content,
-      contentType: attachment.contentType || "application/octet-stream",
-    }));
+    payload.attachment = attachments.map((attachment) => {
+      if (!attachment.content) {
+        throw new Error(
+          `Missing content for attachment: ${attachment.filename}`
+        );
+      }
+
+      const content = Buffer.isBuffer(attachment.content)
+        ? attachment.content.toString("base64")
+        : Buffer.from(attachment.content).toString("base64");
+
+      return {
+        name: attachment.filename,
+        content,
+      };
+    });
   }
 
-  const info = await transporter.sendMail(mailOptions);
+  const response = await fetch(BREVO_API_URL, {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "api-key": apiKey,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
 
-  console.log("Email accepted by SMTP:", info.messageId);
+  const responseText = await response.text();
 
-  return info;
+  let result = {};
+
+  try {
+    result = responseText ? JSON.parse(responseText) : {};
+  } catch {
+    result = { message: responseText };
+  }
+
+  if (!response.ok) {
+    console.error("Brevo email API failed:", {
+      status: response.status,
+      message: result.message || "Email sending failed",
+      code: result.code,
+    });
+
+    throw new Error(
+      result.message || `Brevo email API error: ${response.status}`
+    );
+  }
+
+  console.log("Brevo accepted email:", result.messageId || "Accepted");
+
+  return result;
 };
 
 // ================= VERIFY EMAIL CONFIGURATION =================
 
 const verifyEmailConnection = async () => {
   try {
-    const transporter = createTransporter();
-    await transporter.verify();
+    getEmailConfig();
 
-    console.log("Gmail SMTP connection verified");
+    // This checks configuration only.
+    // Actual API connectivity is checked when an email is sent.
+    console.log("Brevo email configuration is present.");
+
     return true;
   } catch (error) {
-    console.error("Email connection check failed:", error.message);
+    console.error("Email configuration check failed:", error.message);
     return false;
   }
 };
@@ -90,6 +147,10 @@ const sendOtpEmail = async (email, otp) => {
   try {
     if (!email) {
       throw new Error("Customer email is required");
+    }
+
+    if (!otp) {
+      throw new Error("OTP is required");
     }
 
     return await sendEmail({
@@ -115,6 +176,10 @@ const sendResetOtpEmail = async (email, otp) => {
       throw new Error("Recipient email is required");
     }
 
+    if (!otp) {
+      throw new Error("OTP is required");
+    }
+
     return await sendEmail({
       to: email,
       subject: "RIZO - Password Reset OTP",
@@ -136,7 +201,7 @@ If you did not request this, please ignore this email.`,
 
 const sendContactEmail = async ({ name, email, phone, comment }) => {
   try {
-    const adminEmail = process.env.EMAIL_USER;
+    const { adminEmail } = getEmailConfig();
 
     if (!adminEmail) {
       throw new Error("EMAIL_USER is not configured");
@@ -146,8 +211,7 @@ const sendContactEmail = async ({ name, email, phone, comment }) => {
       to: adminEmail,
       replyTo: email,
       subject: "New Contact Form Message - RIZO Fashion",
-      text: `
-New Contact Form Message
+      text: `New Contact Form Message
 
 Name: ${name || "N/A"}
 Email: ${email || "N/A"}
@@ -156,8 +220,7 @@ Phone: ${phone || "N/A"}
 Message:
 ${comment || "No message provided"}
 
-Submitted from the RIZO Fashion Contact page.
-      `.trim(),
+Submitted from the RIZO Fashion Contact page.`,
     });
   } catch (error) {
     console.error("Contact email failed:", error.message);
@@ -196,8 +259,7 @@ const sendOrderConfirmationEmail = async ({
     return await sendEmail({
       to: user.email,
       subject: `RIZO - Order Confirmation #${orderId}`,
-      text: `
-Hello ${customerName},
+      text: `Hello ${customerName},
 
 Thank you for shopping with RIZO Fashion!
 
@@ -215,8 +277,7 @@ ${
     : "Your invoice is currently unavailable."
 }
 
-Thank you for choosing RIZO Fashion!
-      `.trim(),
+Thank you for choosing RIZO Fashion!`,
       attachments,
     });
   } catch (error) {
@@ -229,7 +290,7 @@ Thank you for choosing RIZO Fashion!
 
 const sendNewOrderAdminEmail = async ({ order, customer }) => {
   try {
-    const adminEmail = process.env.EMAIL_USER;
+    const { adminEmail } = getEmailConfig();
 
     if (!adminEmail) {
       throw new Error("EMAIL_USER is not configured");
@@ -245,8 +306,7 @@ const sendNewOrderAdminEmail = async ({ order, customer }) => {
     return await sendEmail({
       to: adminEmail,
       subject: `RIZO - New Order Received #${orderId}`,
-      text: `
-New Order Received
+      text: `New Order Received
 
 Order ID: ${orderId}
 Customer Name: ${customerName}
@@ -256,8 +316,7 @@ Payment Status: ${order?.paymentStatus || "N/A"}
 Order Status: ${order?.orderStatus || "N/A"}
 Total Amount: Rs. ${finalAmount.toFixed(2)}
 
-Please log in to the RIZO admin panel to view the order.
-      `.trim(),
+Please log in to the RIZO admin panel to view the order.`,
     });
   } catch (error) {
     console.error("New order admin email failed:", error.message);
